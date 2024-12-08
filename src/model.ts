@@ -52,7 +52,7 @@ const players = {
 
 let currentPlayer:CurrentPlayer = playerOne
 
-const setCurrentPlayer = (number:1|2)=> players[number]
+const setCurrentPlayer = (number:1|2)=> currentPlayer = players[number]
 const getCurrentPlayer = ()=> currentPlayer
 
 
