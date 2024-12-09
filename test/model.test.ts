@@ -11,6 +11,11 @@ import {
   createGameGrid,
   XAxisWords,
   YAxisWords,
+  isHorizontalLineWinner,
+  XAxisNumber,
+  YAxisNumber,
+  CounterNumber,
+  isHLineWithinGameBoard,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -67,15 +72,126 @@ describe("createTile", () => {
 });
 
 describe("createGameBoard", () => {
-    test("The tile on the 2nd row and last column has a ['He', 'buy'] value in its sentence prop", () => {
-      const expected: Tile = {
-        playerId: "empty",
-        color: "nocolor",
-        sentence: ["He", "buy"],
-        canInsert: false,
-      };
+  test("The tile on the 2nd row and last column has a ['He', 'buy'] value in its sentence prop", () => {
+    const expected: Tile = {
+      playerId: "empty",
+      color: "nocolor",
+      sentence: ["He", "buy"],
+      canInsert: false,
+    };
 
-      const xAxisWords: XAxisWords = [
+    const xAxisWords: XAxisWords = [
+      "eat",
+      "drink",
+      "sleep",
+      "run",
+      "walk",
+      "study",
+      "use",
+      "watch",
+      "listen",
+      "buy",
+    ];
+    const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+
+    const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+
+    const result = gameBoard[1][9];
+
+    expect(result).toEqual(expected);
+  });
+});
+
+describe("findTile", () => {
+  test("Return a tile from coordinates [2,2]", () => {
+    const expected: Tile = {
+      playerId: "empty",
+      color: "nocolor",
+      sentence: ["He", "buy"],
+      canInsert: false,
+    };
+
+    const xAxisWords: XAxisWords = [
+      "eat",
+      "drink",
+      "sleep",
+      "run",
+      "walk",
+      "study",
+      "use",
+      "watch",
+      "listen",
+      "buy",
+    ];
+    const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+
+    const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+
+    const result = gameBoard[1][9];
+
+    expect(result).toEqual(expected);
+  });
+});
+
+describe.skip("isHorizontalLineWinner", () => {
+  test("Return true if the four tiles in a horizontal line have player one on them", () => {
+    const expected: Tile[] = [
+      {
+        playerId: 1,
+        color: "nocolor",
+        sentence: ["I", "eat"],
+        canInsert: false,
+      },
+      {
+        playerId: 1,
+        color: "nocolor",
+        sentence: ["I", "drink"],
+        canInsert: false,
+      },
+      {
+        playerId: 1,
+        color: "nocolor",
+        sentence: ["I", "sleep"],
+        canInsert: false,
+      },
+      {
+        playerId: 1,
+        color: "nocolor",
+        sentence: ["I", "run"],
+        canInsert: false,
+      },
+    ];
+
+    const xAxisWords: XAxisWords = [
+      "eat",
+      "drink",
+      "sleep",
+      "run",
+      "walk",
+      "study",
+      "use",
+      "watch",
+      "listen",
+      "buy",
+    ];
+    const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+
+    const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+
+    const result: boolean = isHorizontalLineWinner();
+
+    const result: Tile = createTile("I", "study");
+
+    expect(result).toEqual(expected);
+  });
+});
+
+describe("isHLineWithinGameBoard", () => {
+  test("Return true if pass coordinates [1,1] and counter is 0 ", () => {
+    const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [1, 1];
+    const counter:CounterNumber = 0;
+
+    const xAxisWords: XAxisWords = [
         "eat",
         "drink",
         "sleep",
@@ -88,14 +204,11 @@ describe("createGameBoard", () => {
         "buy",
       ];
       const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
-  
-      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-      const result = gameBoard[1][9]
+    const gameBoard:GameBoard = createGameGrid(xAxisWords, yAxisWords)
 
-      console.log(result)
-  
-      expect(result).toEqual(expected);
-    });
+    const result:boolean = isHLineWithinGameBoard(targetY, targetX, gameBoard, counter)
+
+    expect(result).toBe(true);
   });
-  
+});

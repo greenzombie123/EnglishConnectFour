@@ -112,6 +112,20 @@ const createGameGrid = (xWords:XAxisWords,yWords:YAxisWords):GameBoard => {
     }) as GameBoard
 };
 
+const changePlayers = ()=>{}
+
+const pickTile = ()=>{}
+
+const findTile = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard):Tile=>{}
+
+const checkHorizontalLine = ()=> {}
+
+const isHorizontalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard ):boolean=> {}
+
+export type CounterNumber = 0 | -1 | -2 | -3
+
+const isHLineWithinGameBoard = (targetY:YAxisNumber, targetX:XAxisNumber,  gameBoard:GameBoard,  counter:CounterNumber):boolean=>{}
+
 
 export {
   getCurrentPlayer,
@@ -119,5 +133,7 @@ export {
   setPlayerColor,
   getPlayers,
   createTile,
-  createGameGrid
+  createGameGrid,
+  isHorizontalLineWinner,
+  isHLineWithinGameBoard
 };
