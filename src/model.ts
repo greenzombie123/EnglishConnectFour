@@ -135,12 +135,36 @@ const isHorizontalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBo
     return true
 }
 
-const isVerticalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber ):boolean=> {}
+const isVerticalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber, currentPlayerId:1|2 ):boolean=> {
+    for (let y = (counter + targetY); y <= (3 + counter + targetY); y++) {
+        if(!isVLineWithinGameBoard(y)) return false
+        const tile:Tile = findTile(y, targetX, gameBoard)
+        if(tile.playerId !== currentPlayerId) return false
+    }
 
-const isDiagonalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber ):boolean=> {}
+    return true
+}
 
+const isDiagonalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber, currentPlayerId:1|2 ):boolean=> {
+    let startingX:number = targetX + counter
+    let startingY:number = targetY + counter
+    
+    for (let index = 0; index <= 3; index++) {
+        if(!isVLineWithinGameBoard(startingY) || !isHLineWithinGameBoard(startingX)) return false
+
+
+        const tile:Tile = findTile(startingY, startingX, gameBoard)
+        if(tile.playerId !== currentPlayerId) return false
+
+        startingX++
+        startingY++
+    }
+
+    return true
+}
+ 
 const isHLineWithinGameBoard = (targetX:number):targetX is XAxisNumber => targetX >= 0 && targetX <= 9
-const isVLineWithinGameBoard = (targetY:number):boolean=> targetY >= 0 && targetY <= 5
+const isVLineWithinGameBoard = (targetY:number):targetY is YAxisNumber => targetY >= 0 && targetY <= 5
 
 
 
@@ -153,6 +177,8 @@ export {
   createTile,
   createGameGrid,
   isHorizontalLineWinner,
+  isVerticalLineWinner,
+  isDiagonalLineWinner,
   isHLineWithinGameBoard,
   findTile
 };

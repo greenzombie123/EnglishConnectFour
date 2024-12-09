@@ -17,6 +17,8 @@ import {
   CounterNumber,
   isHLineWithinGameBoard,
   findTile,
+  isVerticalLineWinner,
+  isDiagonalLineWinner,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -189,6 +191,61 @@ describe("isHorizontalLineWinner", () => {
   });
 });
 
+describe("isVerticalLineWinner", () => {
+    test("Return false if not all the four tiles in a vertical line have player one on them", () => {
+  
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  
+      const result: boolean = isVerticalLineWinner(targetY, targetX, gameBoard, 0, 1);
+  
+      expect(result).toBe(false);
+    });
+  
+    test("Return true if  all the four tiles in a vertical line have player one on them", () => {
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+      gameBoard[0][0].playerId = 1
+      gameBoard[1][0].playerId = 1
+      gameBoard[2][0].playerId = 1
+      gameBoard[3][0].playerId = 1
+  
+      const result: boolean = isVerticalLineWinner(targetY, targetX, gameBoard, 0, 1);
+  
+      expect(result).toBe(true);
+    });
+  });
+
 describe("isHLineWithinGameBoard", () => {
   test("Return true if pass coordinates [1,1] and counter is 0 ", () => {
     const targetX:XAxisNumber = 1;
@@ -198,3 +255,58 @@ describe("isHLineWithinGameBoard", () => {
     expect(result).toBe(true);
   });
 });
+
+describe("isDiagonalLineWinner", () => {
+    test("Return false if not all the four tiles in a Diagonal line have player one on them", () => {
+  
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  
+      const result: boolean = isDiagonalLineWinner(targetY, targetX, gameBoard, 0, 1);
+  
+      expect(result).toBe(false);
+    });
+  
+    test("Return true if  all the four tiles in a vertical line have player one on them", () => {
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+      gameBoard[0][0].playerId = 1
+      gameBoard[1][1].playerId = 1
+      gameBoard[2][2].playerId = 1
+      gameBoard[3][3].playerId = 1
+  
+      const result: boolean = isDiagonalLineWinner(targetY, targetX, gameBoard, 0, 1);
+  
+      expect(result).toBe(true);
+    });
+  });
