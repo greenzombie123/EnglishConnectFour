@@ -20,6 +20,7 @@ import {
   isVerticalLineWinner,
   isDiagonalLineWinner,
   checkHorizontalLine,
+  checkVerticalLine,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -333,12 +334,12 @@ describe("isDiagonalLineWinner", () => {
   
       const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
   
-      const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard;
+      const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard, 1)
   
       expect(result).toBe(false);
     });
   
-    test("Return true there is no four tokens in a horizontal row", () => {
+    test("Return true if there are four tokens in a horizontal row", () => {
       const xAxisWords: XAxisWords = [
         "eat",
         "drink",
@@ -357,12 +358,68 @@ describe("isDiagonalLineWinner", () => {
   
       const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
       gameBoard[0][0].playerId = 1
-      gameBoard[1][1].playerId = 1
-      gameBoard[2][2].playerId = 1
-      gameBoard[3][3].playerId = 1
+      gameBoard[0][1].playerId = 1
+      gameBoard[0][2].playerId = 1
+      gameBoard[0][3].playerId = 1
   
-      const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard);
+      const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard, 1);
   
       expect(result).toBe(true);
     });
   });
+
+  describe("checkVerticalLine", () => {
+    test("Return false there is no four tokens in a vertical row", () => {
+  
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  
+      const result: boolean = checkVerticalLine(targetY, targetX, gameBoard, 1)
+  
+      expect(result).toBe(false);
+    });
+  
+    test("Return true if there are four tokens in a vertical column", () => {
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+      gameBoard[0][0].playerId = 1
+      gameBoard[1][0].playerId = 1
+      gameBoard[2][0].playerId = 1
+      gameBoard[3][0].playerId = 1
+  
+      const result: boolean = checkVerticalLine(targetY, targetX, gameBoard, 1);
+  
+      expect(result).toBe(true);
+    });
+  });
+

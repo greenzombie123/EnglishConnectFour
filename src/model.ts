@@ -12,13 +12,24 @@ export type Tile = {
   sentence: Sentence;
 };
 
-export type XAxisNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 ;
+export type XAxisNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export type YAxisNumber = 0 | 1 | 2 | 3 | 4 | 5;
 
-export type XAxisWords = [string, string, string, string, string, string, string, string, string, string];
+export type XAxisWords = [
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+];
 
-export type YAxisWords = [string, string, string, string, string, string]
+export type YAxisWords = [string, string, string, string, string, string];
 
 export type GameBoard = [
   [Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile],
@@ -96,80 +107,118 @@ const createSentence = (firstWord: string, secondWord: string) => [
   secondWord,
 ];
 
-const createGameGrid = (xWords:XAxisWords,yWords:YAxisWords):GameBoard => {
-   
+const createGameGrid = (xWords: XAxisWords, yWords: YAxisWords): GameBoard => {
+  return yWords.map((yword) => {
+    const row: Tile[] = [];
 
-    return yWords.map((yword)=>{
-        const row:Tile[] = []
-    
-        xWords.forEach((xword)=>{
+    xWords.forEach((xword) => {
+      const tile: Tile = createTile(yword, xword);
+      row.push(tile);
+    });
 
-            const tile:Tile = createTile(yword, xword)
-            row.push(tile)
-        })
-
-        return row
-    }) as GameBoard
+    return row;
+  }) as GameBoard;
 };
 
-const changePlayers = ()=>{}
+const changePlayers = () => {};
 
-const pickTile = ()=>{
+const pickTile = () => {};
 
-}
+const findTile = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+): Tile => gameBoard[targetY][targetX];
 
-const findTile = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard):Tile=>gameBoard[targetY][targetX]
+const checkHorizontalLine = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+  playerId: 1 | 2,
+): boolean =>
+  isHorizontalLineWinner(targetY, targetX, gameBoard, 0, playerId) ||
+  isHorizontalLineWinner(targetY, targetX, gameBoard, -1, playerId) ||
+  isHorizontalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
+  isHorizontalLineWinner(targetY, targetX, gameBoard, -3, playerId);
 
-const checkHorizontalLine = ():boolean=> {}
-const checkVerticalLine = ():boolean=> {}
-const checkDiagonalLine = ():boolean=> {}
+const checkVerticalLine = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+  playerId: 1 | 2,
+): boolean =>
+  isVerticalLineWinner(targetY, targetX, gameBoard, 0, playerId) ||
+  isVerticalLineWinner(targetY, targetX, gameBoard, -1, playerId) ||
+  isVerticalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
+  isVerticalLineWinner(targetY, targetX, gameBoard, -3, playerId);
 
-export type CounterNumber = 0 | -1 | -2 | -3
+const checkDiagonalLine = (): boolean => {};
 
-const isHorizontalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber, currentPlayerId:1|2 ):boolean=> {
+export type CounterNumber = 0 | -1 | -2 | -3;
 
-    for (let x = (counter + targetX); x <= (3 + counter + targetX); x++) {
-        if(!isHLineWithinGameBoard(x)) return false
-        const tile:Tile = findTile(targetY, x, gameBoard)
-        if(tile.playerId !== currentPlayerId) return false
-    }
+const isHorizontalLineWinner = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+  counter: CounterNumber,
+  currentPlayerId: 1 | 2,
+): boolean => {
+  for (let x = counter + targetX; x <= 3 + counter + targetX; x++) {
+    if (!isHLineWithinGameBoard(x)) return false;
+    const tile: Tile = findTile(targetY, x, gameBoard);
+    if (tile.playerId !== currentPlayerId) return false;
+  }
 
-    return true
-}
+  return true;
+};
 
-const isVerticalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber, currentPlayerId:1|2 ):boolean=> {
-    for (let y = (counter + targetY); y <= (3 + counter + targetY); y++) {
-        if(!isVLineWithinGameBoard(y)) return false
-        const tile:Tile = findTile(y, targetX, gameBoard)
-        if(tile.playerId !== currentPlayerId) return false
-    }
+const isVerticalLineWinner = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+  counter: CounterNumber,
+  currentPlayerId: 1 | 2,
+): boolean => {
+  for (let y = counter + targetY; y <= 3 + counter + targetY; y++) {
+    if (!isVLineWithinGameBoard(y)) return false;
+    const tile: Tile = findTile(y, targetX, gameBoard);
+    if (tile.playerId !== currentPlayerId) return false;
+  }
 
-    return true
-}
+  return true;
+};
 
-const isDiagonalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber, currentPlayerId:1|2 ):boolean=> {
-    let startingX:number = targetX + counter
-    let startingY:number = targetY + counter
-    
-    for (let index = 0; index <= 3; index++) {
-        if(!isVLineWithinGameBoard(startingY) || !isHLineWithinGameBoard(startingX)) return false
+const isDiagonalLineWinner = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+  counter: CounterNumber,
+  currentPlayerId: 1 | 2,
+): boolean => {
+  let startingX: number = targetX + counter;
+  let startingY: number = targetY + counter;
 
+  for (let index = 0; index <= 3; index++) {
+    if (
+      !isVLineWithinGameBoard(startingY) ||
+      !isHLineWithinGameBoard(startingX)
+    )
+      return false;
 
-        const tile:Tile = findTile(startingY, startingX, gameBoard)
-        if(tile.playerId !== currentPlayerId) return false
+    const tile: Tile = findTile(startingY, startingX, gameBoard);
+    if (tile.playerId !== currentPlayerId) return false;
 
-        startingX++
-        startingY++
-    }
+    startingX++;
+    startingY++;
+  }
 
-    return true
-}
- 
-const isHLineWithinGameBoard = (targetX:number):targetX is XAxisNumber => targetX >= 0 && targetX <= 9
-const isVLineWithinGameBoard = (targetY:number):targetY is YAxisNumber => targetY >= 0 && targetY <= 5
+  return true;
+};
 
-
-
+const isHLineWithinGameBoard = (targetX: number): targetX is XAxisNumber =>
+  targetX >= 0 && targetX <= 9;
+const isVLineWithinGameBoard = (targetY: number): targetY is YAxisNumber =>
+  targetY >= 0 && targetY <= 5;
 
 export {
   getCurrentPlayer,
@@ -185,5 +234,5 @@ export {
   findTile,
   checkHorizontalLine,
   checkVerticalLine,
-  checkDiagonalLine
+  checkDiagonalLine,
 };
