@@ -152,7 +152,20 @@ const checkVerticalLine = (
   isVerticalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
   isVerticalLineWinner(targetY, targetX, gameBoard, -3, playerId);
 
-const checkDiagonalLine = (): boolean => {};
+const checkDiagonalLine = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+  playerId: 1 | 2,
+): boolean =>
+  isDiagonalLineWinner(targetY, targetX, gameBoard, 0, playerId) ||
+  isDiagonalLineWinner(targetY, targetX, gameBoard, -1, playerId) ||
+  isDiagonalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
+  isDiagonalLineWinner(targetY, targetX, gameBoard, -3, playerId) ||
+  isOppositeDiagonalLineWinner(targetY, targetX, gameBoard, 0, playerId) ||
+  isOppositeDiagonalLineWinner(targetY, targetX, gameBoard, -1, playerId) ||
+  isOppositeDiagonalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
+  isOppositeDiagonalLineWinner(targetY, targetX, gameBoard, -3, playerId);
 
 export type CounterNumber = 0 | -1 | -2 | -3;
 
@@ -215,6 +228,33 @@ const isDiagonalLineWinner = (
   return true;
 };
 
+const isOppositeDiagonalLineWinner = (
+  targetY: YAxisNumber,
+  targetX: XAxisNumber,
+  gameBoard: GameBoard,
+  counter: CounterNumber,
+  currentPlayerId: 1 | 2,
+): boolean => {
+  let startingX: number = targetX + counter;
+  let startingY: number = targetY + counter;
+
+  for (let index = 0; index <= 3; index++) {
+    if (
+      !isVLineWithinGameBoard(startingY) ||
+      !isHLineWithinGameBoard(startingX)
+    )
+      return false;
+
+    const tile: Tile = findTile(startingY, startingX, gameBoard);
+    if (tile.playerId !== currentPlayerId) return false;
+
+    startingX--;
+    startingY++;
+  }
+
+  return true;
+};
+
 const isHLineWithinGameBoard = (targetX: number): targetX is XAxisNumber =>
   targetX >= 0 && targetX <= 9;
 const isVLineWithinGameBoard = (targetY: number): targetY is YAxisNumber =>
@@ -230,6 +270,7 @@ export {
   isHorizontalLineWinner,
   isVerticalLineWinner,
   isDiagonalLineWinner,
+  isOppositeDiagonalLineWinner,
   isHLineWithinGameBoard,
   findTile,
   checkHorizontalLine,

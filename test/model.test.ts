@@ -21,6 +21,7 @@ import {
   isDiagonalLineWinner,
   checkHorizontalLine,
   checkVerticalLine,
+  checkDiagonalLine,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -418,6 +419,89 @@ describe("isDiagonalLineWinner", () => {
       gameBoard[3][0].playerId = 1
   
       const result: boolean = checkVerticalLine(targetY, targetX, gameBoard, 1);
+  
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("checkDiagonalLine", () => {
+    test("Return false there is no four tokens in a diagonal row", () => {
+  
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  
+      const result: boolean = checkDiagonalLine(targetY, targetX, gameBoard, 1)
+  
+      expect(result).toBe(false);
+    });
+  
+    test("Return true if there are four tokens in a diagonal column", () => {
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+      gameBoard[0][0].playerId = 1
+      gameBoard[1][1].playerId = 1
+      gameBoard[2][2].playerId = 1
+      gameBoard[3][3].playerId = 1
+  
+      const result: boolean = checkDiagonalLine(targetY, targetX, gameBoard, 1);
+  
+      expect(result).toBe(true);
+    });
+
+    test("Return true if there are four tokens in an opposite diagonal column", () => {
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [3,3]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+      gameBoard[3][3].playerId = 1
+      gameBoard[2][2].playerId = 1
+      gameBoard[1][1].playerId = 1
+      gameBoard[0][0].playerId = 1
+  
+      const result: boolean = checkDiagonalLine(targetY, targetX, gameBoard, 1);
   
       expect(result).toBe(true);
     });
