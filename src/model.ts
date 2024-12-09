@@ -121,6 +121,8 @@ const pickTile = ()=>{
 const findTile = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard):Tile=>gameBoard[targetY][targetX]
 
 const checkHorizontalLine = ():boolean=> {}
+const checkVerticalLine = ():boolean=> {}
+const checkDiagonalLine = ():boolean=> {}
 
 export type CounterNumber = 0 | -1 | -2 | -3
 
@@ -180,5 +182,8 @@ export {
   isVerticalLineWinner,
   isDiagonalLineWinner,
   isHLineWithinGameBoard,
-  findTile
+  findTile,
+  checkHorizontalLine,
+  checkVerticalLine,
+  checkDiagonalLine
 };

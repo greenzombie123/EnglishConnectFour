@@ -19,6 +19,7 @@ import {
   findTile,
   isVerticalLineWinner,
   isDiagonalLineWinner,
+  checkHorizontalLine,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -306,6 +307,61 @@ describe("isDiagonalLineWinner", () => {
       gameBoard[3][3].playerId = 1
   
       const result: boolean = isDiagonalLineWinner(targetY, targetX, gameBoard, 0, 1);
+  
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("checkHorizontalLine", () => {
+    test("Return false there is no four tokens in a horizontal row", () => {
+  
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  
+      const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard;
+  
+      expect(result).toBe(false);
+    });
+  
+    test("Return true there is no four tokens in a horizontal row", () => {
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+      gameBoard[0][0].playerId = 1
+      gameBoard[1][1].playerId = 1
+      gameBoard[2][2].playerId = 1
+      gameBoard[3][3].playerId = 1
+  
+      const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard);
   
       expect(result).toBe(true);
     });
