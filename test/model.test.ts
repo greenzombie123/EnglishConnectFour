@@ -16,6 +16,7 @@ import {
   YAxisNumber,
   CounterNumber,
   isHLineWithinGameBoard,
+  findTile,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -107,7 +108,7 @@ describe("findTile", () => {
     const expected: Tile = {
       playerId: "empty",
       color: "nocolor",
-      sentence: ["He", "buy"],
+      sentence: ["She", "sleep"],
       canInsert: false,
     };
 
@@ -127,40 +128,14 @@ describe("findTile", () => {
 
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result = gameBoard[1][9];
+    const result = findTile(2,2, gameBoard)
 
     expect(result).toEqual(expected);
   });
 });
 
-describe.skip("isHorizontalLineWinner", () => {
-  test("Return true if the four tiles in a horizontal line have player one on them", () => {
-    const expected: Tile[] = [
-      {
-        playerId: 1,
-        color: "nocolor",
-        sentence: ["I", "eat"],
-        canInsert: false,
-      },
-      {
-        playerId: 1,
-        color: "nocolor",
-        sentence: ["I", "drink"],
-        canInsert: false,
-      },
-      {
-        playerId: 1,
-        color: "nocolor",
-        sentence: ["I", "sleep"],
-        canInsert: false,
-      },
-      {
-        playerId: 1,
-        color: "nocolor",
-        sentence: ["I", "run"],
-        canInsert: false,
-      },
-    ];
+describe("isHorizontalLineWinner", () => {
+  test("Return false if not all the four tiles in a horizontal line have player one on them", () => {
 
     const xAxisWords: XAxisWords = [
       "eat",
@@ -176,38 +151,49 @@ describe.skip("isHorizontalLineWinner", () => {
     ];
     const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
 
+    const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result: boolean = isHorizontalLineWinner();
+    const result: boolean = isHorizontalLineWinner(targetY, targetX, gameBoard, 0, 1);
 
-    const result: Tile = createTile("I", "study");
+    expect(result).toBe(false);
+  });
 
-    expect(result).toEqual(expected);
+  test("Return true if  all the four tiles in a horizontal line have player one on them", () => {
+    const xAxisWords: XAxisWords = [
+      "eat",
+      "drink",
+      "sleep",
+      "run",
+      "walk",
+      "study",
+      "use",
+      "watch",
+      "listen",
+      "buy",
+    ];
+    const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+
+    const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [5,0]
+
+    const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+    gameBoard[0][2].playerId = 1
+    gameBoard[0][3].playerId = 1
+    gameBoard[0][4].playerId = 1
+    gameBoard[0][5].playerId = 1
+
+    const result: boolean = isHorizontalLineWinner(targetY, targetX, gameBoard, -3, 1);
+
+    expect(result).toBe(true);
   });
 });
 
 describe("isHLineWithinGameBoard", () => {
   test("Return true if pass coordinates [1,1] and counter is 0 ", () => {
-    const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [1, 1];
-    const counter:CounterNumber = 0;
+    const targetX:XAxisNumber = 1;
 
-    const xAxisWords: XAxisWords = [
-        "eat",
-        "drink",
-        "sleep",
-        "run",
-        "walk",
-        "study",
-        "use",
-        "watch",
-        "listen",
-        "buy",
-      ];
-      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
-
-    const gameBoard:GameBoard = createGameGrid(xAxisWords, yAxisWords)
-
-    const result:boolean = isHLineWithinGameBoard(targetY, targetX, gameBoard, counter)
+    const result:boolean = isHLineWithinGameBoard(targetX)
 
     expect(result).toBe(true);
   });

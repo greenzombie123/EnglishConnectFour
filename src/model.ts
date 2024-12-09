@@ -12,9 +12,9 @@ export type Tile = {
   sentence: Sentence;
 };
 
-export type XAxisNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+export type XAxisNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 ;
 
-export type YAxisNumber = 1 | 2 | 3 | 4 | 5 | 6;
+export type YAxisNumber = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type XAxisWords = [string, string, string, string, string, string, string, string, string, string];
 
@@ -114,17 +114,35 @@ const createGameGrid = (xWords:XAxisWords,yWords:YAxisWords):GameBoard => {
 
 const changePlayers = ()=>{}
 
-const pickTile = ()=>{}
+const pickTile = ()=>{
 
-const findTile = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard):Tile=>{}
+}
 
-const checkHorizontalLine = ()=> {}
+const findTile = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard):Tile=>gameBoard[targetY][targetX]
 
-const isHorizontalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard ):boolean=> {}
+const checkHorizontalLine = ():boolean=> {}
 
 export type CounterNumber = 0 | -1 | -2 | -3
 
-const isHLineWithinGameBoard = (targetY:YAxisNumber, targetX:XAxisNumber,  gameBoard:GameBoard,  counter:CounterNumber):boolean=>{}
+const isHorizontalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber, currentPlayerId:1|2 ):boolean=> {
+
+    for (let x = (counter + targetX); x <= (3 + counter + targetX); x++) {
+        if(!isHLineWithinGameBoard(x)) return false
+        const tile:Tile = findTile(targetY, x, gameBoard)
+        if(tile.playerId !== currentPlayerId) return false
+    }
+
+    return true
+}
+
+const isVerticalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber ):boolean=> {}
+
+const isDiagonalLineWinner = (targetY:YAxisNumber, targetX:XAxisNumber, gameBoard:GameBoard, counter:CounterNumber ):boolean=> {}
+
+const isHLineWithinGameBoard = (targetX:number):targetX is XAxisNumber => targetX >= 0 && targetX <= 9
+const isVLineWithinGameBoard = (targetY:number):boolean=> targetY >= 0 && targetY <= 5
+
+
 
 
 export {
@@ -135,5 +153,6 @@ export {
   createTile,
   createGameGrid,
   isHorizontalLineWinner,
-  isHLineWithinGameBoard
+  isHLineWithinGameBoard,
+  findTile
 };
