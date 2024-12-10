@@ -5,14 +5,22 @@ export type Player = {
 
 export type CurrentPlayer = Player;
 
-export type Tile = {
-  playerId: 1 | 2 | "empty";
-  color: TileColor;
+export type EmptyTile = {
+  playerId: "empty";
+  color: "nocolor";
   canInsert: boolean;
   sentence: Sentence;
 };
 
-export type XAxisNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type PickedTile = {
+  playerId: PlayerId;
+  color: Color;
+  canInsert: false;
+};
+
+export type Tile = EmptyTile | PickedTile;
+
+export type XAxisNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type YAxisNumber = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -48,12 +56,15 @@ export type Color =
   | "black"
   | "orange"
   | "white"
-  | "blue";
+  | "blue"
+  | "nocolor";
 export type TileColor = Color | "nocolor";
 
 export type Sentence = string[];
 
 export type GameStatus = "playing" | "setUp" | "gameover";
+
+export type PlayerId = 1 | 2;
 
 const xAxisWords: XAxisWords = [
   "eat",
@@ -86,20 +97,23 @@ const players = {
 
 let currentPlayer: CurrentPlayer = playerOne;
 
-const setCurrentPlayer = (number: 1 | 2) => (currentPlayer = players[number]);
+let gameBoard: GameBoard;
+
+const setCurrentPlayer = (playerId: PlayerId) =>
+  (currentPlayer = players[playerId]);
 
 const getCurrentPlayer = () => currentPlayer;
 
-const setPlayerColor = (number: 1 | 2, color: Color) =>
-  (players[number] = { ...players[number], color });
+const setPlayerColor = (playerId: PlayerId, color: Color) =>
+  (players[playerId] = { ...players[playerId], color });
 
 const getPlayers = () => players;
 
-const createTile = (firstWord: string, secondWord: string): Tile => ({
-  playerId: "empty",
+const createTile = (firstWord: string, secondWord: string): EmptyTile => ({
   color: "nocolor",
   canInsert: false,
   sentence: [firstWord, secondWord],
+  playerId: "empty",
 });
 
 const createSentence = (firstWord: string, secondWord: string) => [
@@ -120,7 +134,16 @@ const createGameGrid = (xWords: XAxisWords, yWords: YAxisWords): GameBoard => {
   }) as GameBoard;
 };
 
-const changePlayers = () => {};
+const startGame = () => {};
+
+const makeLowestRowInsertable = (oldGameBoard: GameBoard) => {
+  oldGameBoard[0] = oldGameBoard[0].map((tile) => {
+    tile.canInsert = true;
+    return tile;
+  }) as [Tile,Tile,Tile,Tile,Tile,Tile,Tile,Tile,Tile,Tile,]
+
+  gameBoard = oldGameBoard
+};
 
 const pickTile = () => {};
 
@@ -260,6 +283,28 @@ const isHLineWithinGameBoard = (targetX: number): targetX is XAxisNumber =>
 const isVLineWithinGameBoard = (targetY: number): targetY is YAxisNumber =>
   targetY >= 0 && targetY <= 5;
 
+const getGameBoard = () => gameBoard;
+const setGameBoard = (newGameBoard: GameBoard) => {
+  gameBoard = newGameBoard;
+};
+
+const canInsertToken = (tile: Tile): boolean => tile.playerId === "empty";
+
+const insertToken = (
+  x: XAxisNumber,
+  y: YAxisNumber,
+  newGameBoard: GameBoard,
+  player: Player,
+) => {
+  const pickedTile: PickedTile = {
+    playerId: player.playerId,
+    color: player.color,
+    canInsert: false,
+  };
+
+  newGameBoard[y][x] = pickedTile;
+};
+
 export {
   getCurrentPlayer,
   setCurrentPlayer,
@@ -276,4 +321,8 @@ export {
   checkHorizontalLine,
   checkVerticalLine,
   checkDiagonalLine,
+  insertToken,
+  getGameBoard,
+  setGameBoard,
+  makeLowestRowInsertable,
 };

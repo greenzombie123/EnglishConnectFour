@@ -22,6 +22,12 @@ import {
   checkHorizontalLine,
   checkVerticalLine,
   checkDiagonalLine,
+  insertToken,
+  setGameBoard,
+  getGameBoard,
+  PickedTile,
+  makeLowestRowInsertable,
+  EmptyTile,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -504,6 +510,85 @@ describe("isDiagonalLineWinner", () => {
       const result: boolean = checkDiagonalLine(targetY, targetX, gameBoard, 1);
   
       expect(result).toBe(true);
+    });
+  });
+
+  describe("insertToken", () => {
+    test("Change Tile in 0,0 to player 1 and to player one's color", () => {
+
+      const expectedTile:PickedTile = {playerId:1, color:"blue", canInsert:false} 
+  
+      const xAxisWords: XAxisWords = [
+        "eat",
+        "drink",
+        "sleep",
+        "run",
+        "walk",
+        "study",
+        "use",
+        "watch",
+        "listen",
+        "buy",
+      ];
+      const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
+  
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  
+      setGameBoard(gameBoard)
+
+      const playeOne:Player = {playerId:1, color:"blue"} 
+
+      insertToken(targetY, targetX, gameBoard, playeOne)
+
+     const resultTile = getGameBoard()[0][0]
+  
+      expect(resultTile).toEqual(expectedTile);
+    });
+  });
+
+
+  
+  describe("makeLowestRowInsertable", () => {
+    test("Change canInsert prop of all tiles in lowest row to true", () => {
+
+      const expectedTiles : EmptyTile[] = [
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
+      ] 
+  
+      const xAxisWords: XAxisWords = [
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+      ];
+      const yAxisWords: YAxisWords = ["a", "a", "a", "a", "a", "a"];
+  
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  
+      // setGameBoard(gameBoard)
+
+      makeLowestRowInsertable(gameBoard)
+
+      const resultTiles:Tile[] = getGameBoard()[0]
+  
+      expect(resultTiles).toEqual(expectedTiles);
     });
   });
 
