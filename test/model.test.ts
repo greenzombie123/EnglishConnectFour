@@ -26,7 +26,6 @@ import {
   setGameBoard,
   getGameBoard,
   PickedTile,
-  makeLowestRowInsertable,
   EmptyTile,
   canBeInsertable,
   isAboveTileInsertable,
@@ -551,23 +550,8 @@ describe("isDiagonalLineWinner", () => {
     });
   });
 
-
-  
-  describe("makeLowestRowInsertable", () => {
-    test("Change canInsert prop of all tiles in lowest row to true", () => {
-
-      const expectedTiles : EmptyTile[] = [
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-        {playerId:"empty", color:"nocolor", canInsert:true, sentence:["a", "a"]},
-      ] 
+  describe("isAboveTileInsertable", () => {
+    test("Return true if above tile can be inserted with a token", () => {
   
       const xAxisWords: XAxisWords = [
         "a",
@@ -584,37 +568,6 @@ describe("isDiagonalLineWinner", () => {
       const yAxisWords: YAxisWords = ["a", "a", "a", "a", "a", "a"];
   
       const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
-
-      makeLowestRowInsertable(gameBoard)
-
-      const resultTiles:Tile[] = getGameBoard()[0]
-  
-      expect(resultTiles).toEqual(expectedTiles);
-    });
-  });
-
-  describe("isAboveTileInsertable", () => {
-    test("Change canInsert prop of all tiles in lowest row to true", () => {
-  
-      const xAxisWords: XAxisWords = [
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-        "a",
-      ];
-      const yAxisWords: YAxisWords = ["a", "a", "a", "a", "a", "a"];
-  
-      let gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
-
-      makeLowestRowInsertable(gameBoard)
-
-      gameBoard = getGameBoard()
 
       const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,1]
 
@@ -641,20 +594,14 @@ describe("isDiagonalLineWinner", () => {
       ];
       const yAxisWords: YAxisWords = ["a", "a", "a", "a", "a", "a"];
   
-      let gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+      const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-      makeLowestRowInsertable(gameBoard)
-
-      gameBoard = getGameBoard()
-
-      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,1]
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,0]
 
       makeTileInsertable(targetX, targetY, gameBoard)
 
       const tile:Tile = getGameBoard()[1][0]
 
-      console.log(getGameBoard())
-  
       expect(tile.canInsert).toEqual(true);
     });
   });

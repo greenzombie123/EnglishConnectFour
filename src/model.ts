@@ -122,30 +122,18 @@ const createSentence = (firstWord: string, secondWord: string) => [
 ];
 
 const createGameGrid = (xWords: XAxisWords, yWords: YAxisWords): GameBoard => {
-  return yWords.map((yword) => {
+  return yWords.map((yword,yIndex ) => {
     const row: Tile[] = [];
 
     xWords.forEach((xword) => {
       const tile: Tile = createTile(yword, xword);
+      if(yIndex === 0)tile.canInsert = true
       row.push(tile);
     });
 
     return row;
   }) as GameBoard;
 };
-
-const startGame = () => {};
-
-const makeLowestRowInsertable = (oldGameBoard: GameBoard) => {
-  oldGameBoard[0] = oldGameBoard[0].map((tile) => {
-    tile.canInsert = true;
-    return tile;
-  }) as [Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile];
-
-  gameBoard = oldGameBoard;
-};
-
-const pickTile = () => {};
 
 const findTile = (
   targetY: YAxisNumber,
@@ -315,6 +303,10 @@ const insertToken = (
   };
 
   newGameBoard[y][x] = pickedTile;
+
+  gameBoard = newGameBoard;
+
+  return gameBoard;
 };
 
 const makeTileInsertable = (
@@ -322,9 +314,71 @@ const makeTileInsertable = (
   y: YAxisNumber,
   newGameBoard: GameBoard,
 ) => {
-  newGameBoard[y][x].canInsert = true;
+  const newY:YAxisNumber = y + 1 as YAxisNumber
+  newGameBoard[newY][x].canInsert = true;
   gameBoard = newGameBoard;
 };
+
+const decideFirstPlayer = () => {
+  const ranNum: PlayerId = (Math.floor(Math.random() * 2) + 1) as PlayerId;
+  currentPlayer = players[ranNum];
+};
+
+const startGame = () => {
+  const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+  setGameBoard(gameBoard)
+  decideFirstPlayer();
+};
+
+const pickTile = (
+  y: YAxisNumber,
+  x: XAxisNumber,
+) => {
+  const gameBoard = getGameBoard()
+  const player = getCurrentPlayer()
+  const tile: Tile = findTile(y, x, gameBoard);
+  if (!canInsertToken(tile)) return;
+  const newGameBoard = insertToken(x, y, gameBoard, player);
+  if (checkWinner(x, y, newGameBoard, player.playerId)) {
+    console.log("WINNER")
+  }
+  if (isAboveTileInsertable(y, x, newGameBoard))
+    makeTileInsertable(x, y, newGameBoard);
+
+  changePlayers();
+};
+
+const changePlayers = () =>
+  (currentPlayer = currentPlayer.playerId === 1 ? players[2] : players[1]);
+const gameStop = () => {};
+
+const printOutBoard = ()=> console.log(gameBoard)
+
+const checkWinner = (
+  x: XAxisNumber,
+  y: YAxisNumber,
+  gameBoard: GameBoard,
+  playerId: PlayerId,
+) =>
+  checkVerticalLine(y, x, gameBoard, playerId) ||
+  checkHorizontalLine(y, x, gameBoard, playerId) ||
+  checkDiagonalLine(y, x, gameBoard, playerId);
+
+startGame()
+printOutBoard()
+pickTile(0,0)
+pickTile(0,1)
+pickTile(1,1)
+pickTile(0,2)
+pickTile(0,3)
+pickTile(1,2)
+pickTile(2,2)
+pickTile(1,3)
+pickTile(1,0)
+pickTile(2,3)
+pickTile(3,3)
+
+printOutBoard()
 
 export {
   getCurrentPlayer,
@@ -345,7 +399,6 @@ export {
   insertToken,
   getGameBoard,
   setGameBoard,
-  makeLowestRowInsertable,
   makeTileInsertable,
   isAboveTileInsertable,
 };
