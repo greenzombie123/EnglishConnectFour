@@ -28,6 +28,8 @@ import {
   PickedTile,
   makeLowestRowInsertable,
   EmptyTile,
+  canBeInsertable,
+  isAboveTileInsertable,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -581,8 +583,6 @@ describe("isDiagonalLineWinner", () => {
       const yAxisWords: YAxisWords = ["a", "a", "a", "a", "a", "a"];
   
       const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
-  
-      // setGameBoard(gameBoard)
 
       makeLowestRowInsertable(gameBoard)
 
@@ -592,3 +592,35 @@ describe("isDiagonalLineWinner", () => {
     });
   });
 
+  describe("isAboveTileInsertable", () => {
+    test("Change canInsert prop of all tiles in lowest row to true", () => {
+  
+      const xAxisWords: XAxisWords = [
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+        "a",
+      ];
+      const yAxisWords: YAxisWords = ["a", "a", "a", "a", "a", "a"];
+  
+      let gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
+
+      makeLowestRowInsertable(gameBoard)
+
+      gameBoard = getGameBoard()
+
+      const [targetX, targetY]:[XAxisNumber, YAxisNumber] = [0,1]
+
+      const result:boolean = isAboveTileInsertable(targetY, targetX, gameBoard)
+  
+      expect(result).toEqual(true);
+    });
+  });
+
+  
