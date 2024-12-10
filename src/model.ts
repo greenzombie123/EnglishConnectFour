@@ -140,9 +140,9 @@ const makeLowestRowInsertable = (oldGameBoard: GameBoard) => {
   oldGameBoard[0] = oldGameBoard[0].map((tile) => {
     tile.canInsert = true;
     return tile;
-  }) as [Tile,Tile,Tile,Tile,Tile,Tile,Tile,Tile,Tile,Tile,]
+  }) as [Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile];
 
-  gameBoard = oldGameBoard
+  gameBoard = oldGameBoard;
 };
 
 const pickTile = () => {};
@@ -288,14 +288,19 @@ const setGameBoard = (newGameBoard: GameBoard) => {
   gameBoard = newGameBoard;
 };
 
-const canInsertToken = (tile: Tile): boolean => tile.playerId === "empty" && tile.canInsert;
+const canInsertToken = (tile: Tile): boolean =>
+  tile.playerId === "empty" && tile.canInsert;
 
-const isAboveTileInsertable = (y:YAxisNumber, x:XAxisNumber, gameBoard:GameBoard)=>{
-  if(y + 1 > 6) return false
-  const aboveTile:Tile = gameBoard[(y+1) as YAxisNumber][x]
-  if(aboveTile.playerId === "empty") return true
-  return false
-}
+const isAboveTileInsertable = (
+  y: YAxisNumber,
+  x: XAxisNumber,
+  gameBoard: GameBoard,
+) => {
+  if (y + 1 > 6) return false;
+  const aboveTile: Tile = gameBoard[(y + 1) as YAxisNumber][x];
+  if (aboveTile.playerId === "empty") return true;
+  return false;
+};
 
 const insertToken = (
   x: XAxisNumber,
@@ -312,9 +317,14 @@ const insertToken = (
   newGameBoard[y][x] = pickedTile;
 };
 
-const makeTileInsertable = ()=>{
-  
-}
+const makeTileInsertable = (
+  x: XAxisNumber,
+  y: YAxisNumber,
+  newGameBoard: GameBoard,
+) => {
+  newGameBoard[y][x].canInsert = true;
+  gameBoard = newGameBoard;
+};
 
 export {
   getCurrentPlayer,
@@ -337,5 +347,5 @@ export {
   setGameBoard,
   makeLowestRowInsertable,
   makeTileInsertable,
-  isAboveTileInsertable
+  isAboveTileInsertable,
 };
