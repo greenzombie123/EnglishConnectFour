@@ -10,7 +10,7 @@
     "noUncheckedIndexedAccess": true,
     "typeRoots": ["src/@types", "node_modules/@types"],
     "moduleResolution": "nodenext",
-    "declaration": true,
+    // "declaration": true,
     "baseUrl": ".",
     "paths": {
       "eventlistenerhelper":["/home/greenzombie/.nvm/versions/node/v20.13.1/lib/node_modules/eventlistenerhelper"]

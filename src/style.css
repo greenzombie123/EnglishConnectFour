@@ -1,73 +1,43 @@
 html,body{
     height: 100vh;
-}
-
-img{
-    height: 100%;
-    width: 100%;
+    --fontSize:20px;
 }
 
 body{
     display: flex;
     flex-flow: column nowrap;
 
-    .gameContainer{
+    main{
         flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-        .row{
-            display: flex;
-            justify-content: space-evenly;
-            height: 100px;
-            margin: 20px 0;
+        .gameBoard{
 
-            .card{
-                width: 200px;
-                perspective:1000px;
-
-                .inner{
-                    position: relative;
-                    height: 100%;
-                    width: 100%;
-                    transform-style: preserve-3d; /* Keeps both sides visible in 3D */
-                    transition: transform 0.6s; /* Smooth flip effect */
-
-                    &.flip{
-                       transform: rotateY(180deg); /*Flips the card*/ 
-                    }
-
-                    .front,.back{
-                        position:absolute;
-                        width:200px;
-                        backface-visibility:hidden;
-                        border:1px solid black
-                    }
-
-                    .front{
-
-                    }
-
-                    .back{
-                        transform: rotateY(180deg); /* Makes the back initially invisible */
-                    }
+            .row{
+                position: relative;
+                display: flex;
+                .tile {
+                    border: 1px black solid;
+                    width: 120px;
+                    height: 100px;
                 }
-            }
-        }
-        .buttonContainer{
-            display: flex;
-            justify-content: center;
-
-            .restartButton {
-                display: none;
-                background-color: greenyellow;
-                border: 1px solid rgb(192, 191, 191);
-                box-shadow: 1px 4px 0 0px rgb(130 202 19);
-                padding: 10px 20px;
-                font-size: 20px;
-
-                &:active{
-                    transform: translateY(4px);
-                    box-shadow: 1px 0px 0 0px rgb(130 202 19);
+                .x-label{
+                    text-align: center;
+                    font-size: var(--fontSize);
+                    width: 120px;
                 }
+                .y-label{
+                    position: absolute;
+                    align-content: center;
+                    text-align: right;
+                    width: 300PX;
+                    height: 100px;
+                    left: -305px;
+                    font-size: var(--fontSize)
+                }
+                .cornerTile{}
             }
         }
     }

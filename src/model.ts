@@ -364,21 +364,17 @@ const checkWinner = (
   checkHorizontalLine(y, x, gameBoard, playerId) ||
   checkDiagonalLine(y, x, gameBoard, playerId);
 
-startGame()
-printOutBoard()
-pickTile(0,0)
-pickTile(0,1)
-pickTile(1,1)
-pickTile(0,2)
-pickTile(0,3)
-pickTile(1,2)
-pickTile(2,2)
-pickTile(1,3)
-pickTile(1,0)
-pickTile(2,3)
-pickTile(3,3)
+const getAxisWords = ():[XAxisWords, YAxisWords]=> [xAxisWords, yAxisWords]
 
-printOutBoard()
+export type Model = {
+  getAxisWords:()=>[XAxisWords, YAxisWords]
+}
+
+const model:Model = {
+  getAxisWords
+}
+
+export default model
 
 export {
   getCurrentPlayer,
@@ -401,4 +397,5 @@ export {
   setGameBoard,
   makeTileInsertable,
   isAboveTileInsertable,
+  getAxisWords
 };
