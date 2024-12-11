@@ -1,7 +1,14 @@
+export type TileView = {
+    renderToken:()=>void,
+    showMistake:()=>void
+}
 
-const tileView = ()=>{
+const tileView = ():TileView=>{
 
-    return {}
+    const renderToken = ()=>{}
+    const showMistake = ()=>{}
+
+    return {renderToken, showMistake}
 }
 
 export default tileView()

@@ -19,14 +19,34 @@ body{
                 position: relative;
                 display: flex;
                 .tile {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                     border: 1px black solid;
                     width: 120px;
                     height: 100px;
+                    
+
+                    &.token::after{
+                        content: "";
+                        display: block;
+                        border: none;
+                        height: 80px;
+                        width: 80px;
+                        border-radius: 50%;
+                        background-color: red;
+                        animation: 1s ease-in-out reverse falldown;
+                    }
+
+                    
+                   
                 }
                 .x-label{
                     text-align: center;
                     font-size: var(--fontSize);
                     width: 120px;
+
+                   
                 }
                 .y-label{
                     position: absolute;
@@ -48,3 +68,16 @@ body{
         text-align: center;
     }
 }
+
+@keyframes falldown{
+    from {
+      
+      transform: translateY(0px);
+    }
+  
+    to {
+        transform: translateY(-800px);
+    }
+  }
+
+
