@@ -1,14 +1,26 @@
+import { Color, XAxisNumber, YAxisNumber } from "./model";
+
 export type TileView = {
-    renderToken:()=>void,
-    showMistake:()=>void
-}
+  renderToken: (color: Color) => void;
+  showMistake: () => void;
+  getCoordinates: () => [YAxisNumber, XAxisNumber];
+};
 
-const tileView = ():TileView=>{
+const tileView = (
+  tileDiv: HTMLDivElement,
+  coordinates: [YAxisNumber, XAxisNumber],
+): TileView => {
+  const renderToken = (color: Color) => {
+    const token: HTMLDivElement = document.createElement("div");
+    tileDiv.appendChild(token);
+    token.classList.add(color, "token");
+  };
 
-    const renderToken = ()=>{}
-    const showMistake = ()=>{}
+  const showMistake = () => {};
 
-    return {renderToken, showMistake}
-}
+  const getCoordinates = () => coordinates;
 
-export default tileView()
+  return { renderToken, showMistake, getCoordinates };
+};
+
+export default tileView;
