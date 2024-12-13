@@ -1,3 +1,5 @@
+import { eventEmitter } from "eventlistenerhelper";
+
 export type Player = {
   playerId: 1 | 2;
   color: Color;
@@ -122,12 +124,12 @@ const createSentence = (firstWord: string, secondWord: string) => [
 ];
 
 const createGameGrid = (xWords: XAxisWords, yWords: YAxisWords): GameBoard => {
-  return yWords.map((yword,yIndex ) => {
+  return yWords.map((yword, yIndex) => {
     const row: Tile[] = [];
 
     xWords.forEach((xword) => {
       const tile: Tile = createTile(yword, xword);
-      if(yIndex === 0)tile.canInsert = true
+      if (yIndex === 0) tile.canInsert = true;
       row.push(tile);
     });
 
@@ -246,7 +248,7 @@ const isOppositeDiagonalLineWinner = (
   counter: CounterNumber,
   currentPlayerId: 1 | 2,
 ): boolean => {
-  let startingX: number = targetX + counter;
+  let startingX: number = targetX + -(counter);
   let startingY: number = targetY + counter;
 
   for (let index = 0; index <= 3; index++) {
@@ -259,8 +261,8 @@ const isOppositeDiagonalLineWinner = (
     const tile: Tile = findTile(startingY, startingX, gameBoard);
     if (tile.playerId !== currentPlayerId) return false;
 
-    startingX--;
-    startingY++;
+    startingX++;
+    startingY--;
   }
 
   return true;
@@ -314,7 +316,7 @@ const makeTileInsertable = (
   y: YAxisNumber,
   newGameBoard: GameBoard,
 ) => {
-  const newY:YAxisNumber = y + 1 as YAxisNumber
+  const newY: YAxisNumber = (y + 1) as YAxisNumber;
   newGameBoard[newY][x].canInsert = true;
   gameBoard = newGameBoard;
 };
@@ -326,25 +328,23 @@ const decideFirstPlayer = () => {
 
 const startGame = () => {
   const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
-  setGameBoard(gameBoard)
+  setGameBoard(gameBoard);
   decideFirstPlayer();
 };
 
-const pickTile = (
-  y: YAxisNumber,
-  x: XAxisNumber,
-) => {
-  const gameBoard = getGameBoard()
-  const player = getCurrentPlayer()
+const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
+  const gameBoard = getGameBoard();
+  const player = getCurrentPlayer();
   const tile: Tile = findTile(y, x, gameBoard);
   if (!canInsertToken(tile)) return;
   const newGameBoard = insertToken(x, y, gameBoard, player);
   if (checkWinner(x, y, newGameBoard, player.playerId)) {
-    console.log("WINNER")
+    console.log("WINNER");
   }
   if (isAboveTileInsertable(y, x, newGameBoard))
     makeTileInsertable(x, y, newGameBoard);
 
+  eventEmitter.emitEvent("insertToken", { color:player.color, x, y });
   changePlayers();
 };
 
@@ -352,7 +352,7 @@ const changePlayers = () =>
   (currentPlayer = currentPlayer.playerId === 1 ? players[2] : players[1]);
 const gameStop = () => {};
 
-const printOutBoard = ()=> console.log(gameBoard)
+const printOutBoard = () => console.log(gameBoard);
 
 const checkWinner = (
   x: XAxisNumber,
@@ -364,17 +364,27 @@ const checkWinner = (
   checkHorizontalLine(y, x, gameBoard, playerId) ||
   checkDiagonalLine(y, x, gameBoard, playerId);
 
-const getAxisWords = ():[XAxisWords, YAxisWords]=> [xAxisWords, yAxisWords]
+const getAxisWords = (): [XAxisWords, YAxisWords] => [xAxisWords, yAxisWords];
 
 export type Model = {
-  getAxisWords:()=>[XAxisWords, YAxisWords]
-}
+  getAxisWords: () => [XAxisWords, YAxisWords];
+  pickTile: (
+    targetY: YAxisNumber,
+    targetX: XAxisNumber,
+    gameBoard: GameBoard,
+  ) => void;
+  getGameBoard: () => GameBoard;
+  startGame: () => void;
+};
 
-const model:Model = {
-  getAxisWords
-}
+const model: Model = {
+  getAxisWords,
+  pickTile,
+  getGameBoard,
+  startGame,
+};
 
-export default model
+export default model;
 
 export {
   getCurrentPlayer,
@@ -397,5 +407,5 @@ export {
   setGameBoard,
   makeTileInsertable,
   isAboveTileInsertable,
-  getAxisWords
+  getAxisWords,
 };

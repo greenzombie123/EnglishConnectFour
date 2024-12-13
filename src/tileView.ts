@@ -4,6 +4,7 @@ export type TileView = {
   renderToken: (color: Color) => void;
   showMistake: () => void;
   getCoordinates: () => [YAxisNumber, XAxisNumber];
+  getTileDiv:()=>HTMLDivElement
 };
 
 const tileView = (
@@ -20,7 +21,9 @@ const tileView = (
 
   const getCoordinates = () => coordinates;
 
-  return { renderToken, showMistake, getCoordinates };
+  const getTileDiv = ()=> tileDiv
+
+  return { renderToken, showMistake, getCoordinates, getTileDiv };
 };
 
 export default tileView;

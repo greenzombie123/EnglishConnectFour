@@ -34,7 +34,7 @@ body{
                         height: 80px;
                         width: 80px;
                         border-radius: 50%;
-                        animation: 1s ease-in-out reverse falldown;
+                        animation: .5s ease-in-out reverse falldown;
 
                         &.red{
                             background-color: red;
