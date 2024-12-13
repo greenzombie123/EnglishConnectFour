@@ -106,9 +106,19 @@ const setCurrentPlayer = (playerId: PlayerId) =>
 
 const getCurrentPlayer = () => currentPlayer;
 
-const setPlayerColor = (playerId: PlayerId, color: Color) =>
-  (players[playerId] = { ...players[playerId], color });
+const arePlayersSameColor = (playerId: PlayerId, color: Color)=>{
+  const newPlayers = {...players}
+  const otherPlayerId = playerId === 1 ? 2 : 1
+  newPlayers[playerId].color = color
+  return newPlayers[playerId].color === newPlayers[otherPlayerId].color
+}
 
+const setPlayerColor = (playerId: PlayerId, color: Color) => {
+  if(arePlayersSameColor(playerId, color)) return
+  players[playerId] = { ...players[playerId], color };
+  eventEmitter.emitEvent("choseColor", {...players[playerId]})
+  eventEmitter.emitEvent("disallowSameColor", getPlayers())
+};
 const getPlayers = () => players;
 
 const createTile = (firstWord: string, secondWord: string): EmptyTile => ({
@@ -248,7 +258,7 @@ const isOppositeDiagonalLineWinner = (
   counter: CounterNumber,
   currentPlayerId: 1 | 2,
 ): boolean => {
-  let startingX: number = targetX + -(counter);
+  let startingX: number = targetX + -counter;
   let startingY: number = targetY + counter;
 
   for (let index = 0; index <= 3; index++) {
@@ -344,7 +354,7 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   if (isAboveTileInsertable(y, x, newGameBoard))
     makeTileInsertable(x, y, newGameBoard);
 
-  eventEmitter.emitEvent("insertToken", { color:player.color, x, y });
+  eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
   changePlayers();
 };
 
@@ -375,6 +385,8 @@ export type Model = {
   ) => void;
   getGameBoard: () => GameBoard;
   startGame: () => void;
+  setPlayerColor: (playerId: PlayerId, color: Color) => void;
+  getPlayers:()=>{1:Player, 2:Player}
 };
 
 const model: Model = {
@@ -382,6 +394,8 @@ const model: Model = {
   pickTile,
   getGameBoard,
   startGame,
+  setPlayerColor,
+  getPlayers
 };
 
 export default model;

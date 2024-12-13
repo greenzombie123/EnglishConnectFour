@@ -1,11 +1,13 @@
 import { eventEmitter } from "../../../customNodePackages/eventListenerHelper";
-import colorpickerView from "./colorPickerView";
+import colorPickerView from "./colorPickerView";
+import colorpickerView, { ColorPickerView } from "./colorPickerView";
 import gameBoardView, { GameBoardView } from "./gameBoardView";
 import model, {
   Color,
   GameBoard,
   Model,
   Player,
+  PlayerId,
   XAxisNumber,
   YAxisNumber,
 } from "./model";
@@ -14,6 +16,7 @@ import { TileView } from "./tileView";
 type ControllerProps = {
   gameBoardView: GameBoardView;
   model: Model;
+  colorPickerView:ColorPickerView
 };
 
 const handleTileClick = (tileView: TileView) => () => {
@@ -39,6 +42,26 @@ const handleInsertToken = ({
   if (pickedTile) pickedTile.renderToken(color);
 };
 
+const handleColorDotClick =(colorDotDiv:HTMLDivElement, playerId:PlayerId)=> ()=>{
+    const color:Color = colorDotDiv.classList[0] as Color
+    model.setPlayerColor(playerId, color)
+}
+
+const handleStartButtonClick = ()=>{
+    colorpickerView.hideColorPicker()
+    model.startGame();
+}
+
+const handleChosePlayerColor = ({playerId, color}:{playerId:PlayerId, color:Color})=>{
+    colorPickerView.changeColor(playerId, color)
+}
+
+const handleDisallowSameColor = ({1:a, 2:b}:{1:Player,2:Player})=>{
+  colorPickerView.disallowSameColors(a, b)
+}
+
+
+
 const controller = (props: ControllerProps) => {
   const { gameBoardView, model } = props;
 
@@ -48,6 +71,7 @@ const controller = (props: ControllerProps) => {
 
     const tileViews: TileView[] = gameBoardView.getTileViews();
 
+    // handle tile clicking
     tileViews.map((tileView) => {
       const tileDiv: HTMLDivElement = tileView.getTileDiv();
       tileDiv.addEventListener("click", handleTileClick(tileView));
@@ -55,9 +79,32 @@ const controller = (props: ControllerProps) => {
 
     eventEmitter.subscribe("insertToken", handleInsertToken);
 
-    colorpickerView()
+    // handle color picker clicking 
+    const [playerOneColorDots, playerTwoColorDots] = colorPickerView.getColorDots()
 
-    model.startGame();
+    playerOneColorDots.forEach(colorDot=>{
+        colorDot.addEventListener("click", handleColorDotClick(colorDot, 1))
+    })
+
+    playerTwoColorDots.forEach(colorDot=>{
+        colorDot.addEventListener("click", handleColorDotClick(colorDot, 2))
+    })
+
+    const colorPickerButton = colorPickerView.getButton()
+    colorPickerButton.addEventListener("click", handleStartButtonClick)
+
+    eventEmitter.subscribe("choseColor", handleChosePlayerColor)
+
+    eventEmitter.subscribe("disallowSameColor", handleDisallowSameColor)
+
+    handleDisallowSameColor(model.getPlayers())
+
+    // Handle starting the game
+
+    // const startButton = colorPickerView.getButton()
+
+
+    
   };
 
   return { init };
@@ -66,6 +113,7 @@ const controller = (props: ControllerProps) => {
 const props: ControllerProps = {
   gameBoardView: gameBoardView,
   model: model,
+  colorPickerView:colorPickerView
 };
 
 export default controller(props);
