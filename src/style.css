@@ -100,6 +100,96 @@ body{
     }
 }
 
+.colorPicker{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+
+    .playerColorPickerContainer{
+        display: flex;
+        gap: 100px;
+        
+        .playerColorPicker{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            padding: 30px;
+            background-color: white;
+            box-shadow: 1px 1px 1px black;
+    
+            &.playerOne .playerColor{
+                background-color: blue;
+            }  
+    
+            &.playerTwo .playerColor{
+                background-color: red;
+            }  
+    
+            h3{
+                padding: 0;
+                margin: 0;
+                font-size: 30px;
+            }
+            .playerColor{
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                box-shadow: 1px 1px 1px black;
+            }
+            .colorChoices{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                width: 150px;
+                gap: 10px;
+    
+                & *{
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                }
+    
+                .red{
+                    background-color: red;
+                }
+                .blue{
+                    background-color: blue;
+                }
+                .yellow{
+                    background-color: yellow;
+                }
+                .green{
+                    background-color: green;
+                }
+                .purple{
+                    background-color: purple;
+                }
+                .orange{
+                    background-color: orange;
+                }
+                .pink{
+                    background-color: pink;
+                }
+                .black{
+                    background-color: black;
+                }
+            }
+        }
+    }
+
+    button{
+        font-size: 25px;
+        padding: 10px 20px;
+        width: fit-content;
+    }
+}
+
 @keyframes falldown{
     from {
       

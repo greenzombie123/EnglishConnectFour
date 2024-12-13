@@ -1,4 +1,5 @@
 import { eventEmitter } from "../../../customNodePackages/eventListenerHelper";
+import colorpickerView from "./colorPickerView";
 import gameBoardView, { GameBoardView } from "./gameBoardView";
 import model, {
   Color,
@@ -53,6 +54,8 @@ const controller = (props: ControllerProps) => {
     });
 
     eventEmitter.subscribe("insertToken", handleInsertToken);
+
+    colorpickerView()
 
     model.startGame();
   };
