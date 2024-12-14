@@ -60,6 +60,15 @@ const handleDisallowSameColor = ({1:a, 2:b}:{1:Player,2:Player})=>{
   colorPickerView.disallowSameColors(a, b)
 }
 
+const handleInvalidMove = ([y, x]:[y:YAxisNumber, x:XAxisNumber])=>{
+    const tileViews = gameBoardView.getTileViews();
+  const pickedTile = tileViews.find((tileView) => {
+    const [tvY, tvX] = tileView.getCoordinates();
+    if (tvX === x && tvY === y) return tileView;
+  });
+  if (pickedTile) pickedTile.showInvalidMove();
+}
+
 
 
 const controller = (props: ControllerProps) => {
@@ -101,7 +110,8 @@ const controller = (props: ControllerProps) => {
 
     // Handle starting the game
 
-    // const startButton = colorPickerView.getButton()
+    // Handle wrong tile clicking
+    eventEmitter.subscribe("invalidMove", handleInvalidMove)
 
 
     

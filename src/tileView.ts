@@ -2,7 +2,7 @@ import { Color, XAxisNumber, YAxisNumber } from "./model";
 
 export type TileView = {
   renderToken: (color: Color) => void;
-  showMistake: () => void;
+  showInvalidMove: () => void;
   getCoordinates: () => [YAxisNumber, XAxisNumber];
   getTileDiv:()=>HTMLDivElement
 };
@@ -17,13 +17,19 @@ const tileView = (
     token.classList.add(color, "token");
   };
 
-  const showMistake = () => {};
+  const showInvalidMove = () => {
+    console.log(123)
+    tileDiv.classList.add("invalid")
+    setTimeout(()=>{
+        tileDiv.classList.remove("invalid")
+    }, 100)
+  };
 
   const getCoordinates = () => coordinates;
 
   const getTileDiv = ()=> tileDiv
 
-  return { renderToken, showMistake, getCoordinates, getTileDiv };
+  return { renderToken, showInvalidMove, getCoordinates, getTileDiv };
 };
 
 export default tileView;

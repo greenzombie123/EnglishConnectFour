@@ -25,6 +25,10 @@ body{
                     border: 1px black solid;
                     width: 120px;
                     height: 100px;
+
+                    &.invalid{
+                        animation: .2s ease-in invalid;
+                    }
                     
 
                     .token{
@@ -67,6 +71,8 @@ body{
                         &.pink{
                             background-color: pink;
                         }
+
+                        
                     }
 
                     
@@ -104,7 +110,7 @@ dialog.colorPicker{
     background-color: transparent;
         border: none;
         outline: none;
-        
+
     div.colorPicker{
         display: flex;
         flex-direction: column;
@@ -215,6 +221,15 @@ dialog.colorPicker{
         transform: translateY(-800px);
     }
   }
+
+  @keyframes invalid {
+    from{
+        background-color: red;
+    }
+    to{
+        background-color: white;
+    }
+}
 
 
 

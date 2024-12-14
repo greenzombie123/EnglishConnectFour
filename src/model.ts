@@ -346,7 +346,7 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   const gameBoard = getGameBoard();
   const player = getCurrentPlayer();
   const tile: Tile = findTile(y, x, gameBoard);
-  if (!canInsertToken(tile)) return;
+  if (!canInsertToken(tile)) return eventEmitter.emitEvent("invalidMove", [y,x])
   const newGameBoard = insertToken(x, y, gameBoard, player);
   if (checkWinner(x, y, newGameBoard, player.playerId)) {
     console.log("WINNER");
