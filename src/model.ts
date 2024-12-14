@@ -1,4 +1,5 @@
 import { eventEmitter } from "eventlistenerhelper";
+import quizModel from "./quizModel";
 
 export type Player = {
   playerId: 1 | 2;
@@ -26,20 +27,39 @@ export type XAxisNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export type YAxisNumber = 0 | 1 | 2 | 3 | 4 | 5;
 
+const xWords = [
+  "eat",
+  "drink",
+  "sleep",
+  "run",
+  "walk",
+  "study",
+  "use",
+  "watch",
+  "listen",
+  "buy",
+] as const
+
+export type XWord = typeof xWords[number]
+
 export type XAxisWords = [
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
+  XWord,
+  XWord,
+  XWord,
+  XWord,
+  XWord,
+  XWord,
+  XWord,
+  XWord,
+  XWord,
+  XWord,
 ];
 
-export type YAxisWords = [string, string, string, string, string, string];
+const yWords = ["I", "He", "She", "You", "They", "We"] as const
+
+export type YWord = typeof yWords[number]
+
+export type YAxisWords = [YWord, YWord, YWord, YWord, YWord, YWord];
 
 export type GameBoard = [
   [Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile, Tile],
@@ -79,7 +99,9 @@ const xAxisWords: XAxisWords = [
   "watch",
   "listen",
   "buy",
-];
+]
+
+
 const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
 
 const playerOne: Player = {
@@ -100,6 +122,8 @@ const players = {
 let currentPlayer: CurrentPlayer = playerOne;
 
 let gameBoard: GameBoard;
+
+console.log(quizModel.createScrambledSentence({sentence:["I", "eat", "rice", "everyday"], type:"correct"}))
 
 const setCurrentPlayer = (playerId: PlayerId) =>
   (currentPlayer = players[playerId]);
@@ -375,6 +399,8 @@ const checkWinner = (
   checkDiagonalLine(y, x, gameBoard, playerId);
 
 const getAxisWords = (): [XAxisWords, YAxisWords] => [xAxisWords, yAxisWords];
+
+const startQuiz = ()=>{}
 
 export type Model = {
   getAxisWords: () => [XAxisWords, YAxisWords];

@@ -14,9 +14,9 @@ export type GameBoardView = {
 const gameBoardView = (): GameBoardView => {
   let tileViews: TileView[];
 
-  const gameBoard: HTMLDivElement = document.querySelector(
-    ".gameBoard",
-  ) as HTMLDivElement;
+  // const gameBoard: HTMLDivElement = document.querySelector(
+  //   ".gameBoard",
+  // ) as HTMLDivElement;
 
   const xLabels: HTMLDivElement[] = Array.from(
     document.querySelectorAll(".x-label"),
