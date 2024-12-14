@@ -4,7 +4,7 @@ import { XAxisWords, XWord, YAxisWords, YWord } from "../src/model";
 
 describe("getSentence", ()=>{
     test("Get a correct sentence when you pass 'I' and 'eat' as arguments", ()=>{
-        const expected:CorrectSentence = {sentence:["I", "eat", "rice", "everyday"], type:"correct"}
+        const expected:CorrectSentence = {sentence:["I", "eat", "rice", "everyday"], type:"correct", translation:"私は毎日ライスを食べる"}
         const [yWord, xWord]:[YWord, XWord] = ["I", "eat"] 
         const result = quizModel.getSentence(yWord, xWord)
 

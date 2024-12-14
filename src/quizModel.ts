@@ -1,7 +1,7 @@
 import { XAxisWords, XWord, YAxisWords, YWord } from "./model";
 import sentenceManager, { SentenceManager } from "./sentences";
 
-export type CorrectSentence = { sentence: string[]; type: "correct" };
+export type CorrectSentence = { sentence: string[]; type: "correct", translation:string };
 export type ScrambledSentence = { sentence: string[]; type: "scrambled" };
 export type UserSentence = { sentence: string[]; type: "user" };
 // export type NoSentence = {type:"Empty"}
