@@ -296,7 +296,7 @@ const isAboveTileInsertable = (
   x: XAxisNumber,
   gameBoard: GameBoard,
 ) => {
-  if (y + 1 > 6) return false;
+  if (y + 1 > 5) return false;
   const aboveTile: Tile = gameBoard[(y + 1) as YAxisNumber][x];
   if (aboveTile.playerId === "empty") return true;
   return false;
