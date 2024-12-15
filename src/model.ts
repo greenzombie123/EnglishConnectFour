@@ -123,7 +123,7 @@ let currentPlayer: CurrentPlayer = playerOne;
 
 let gameBoard: GameBoard;
 
-console.log(quizModel.createScrambledSentence({sentence:["I", "eat", "rice", "everyday"], type:"correct"}))
+console.log(quizModel.createScrambledSentence({words:["I", "eat", "rice", "everyday"],type:"correct", translation:"私は毎日ライスを食べる"}))
 
 const setCurrentPlayer = (playerId: PlayerId) =>
   (currentPlayer = players[playerId]);
