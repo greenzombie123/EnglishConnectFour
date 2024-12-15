@@ -1,4 +1,4 @@
-import { XAxisWords, XWord, YAxisWords, YWord } from "./model";
+import { XWord, YWord } from "./model";
 import sentenceManager, { SentenceManager } from "./sentences";
 
 export type CorrectSentence = {
@@ -14,8 +14,16 @@ const quizModel = (sentenceManager: SentenceManager) => {
   let currentQuiz: ScrambledSentence;
   let correctAnswer: CorrectSentence;
   let userAnswer: UserAnswer = { words: [], type: "user" };
+  const quizStatus = new Set<string>()
 
-  const startQuiz = (yWord: YWord, xWord: XWord) => {};
+  const startQuiz = (yWord: YWord, xWord: XWord) => {
+    const sentence = getSentence(yWord, xWord)
+    if(sentence){
+        const quiz = createScrambledSentence(sentence)
+        makeQuiz(quiz, sentence)
+        quizStatus.add("ongoing")
+    }
+  };
 
   const getSentence = (
     yWord: YWord,
@@ -75,6 +83,7 @@ const quizModel = (sentenceManager: SentenceManager) => {
   };
 
   const pickWord = (index: number, currentQuiz: ScrambledSentence): void => {
+    if(!quizStatus.has("ongoing")) return
     const userAnswer = getUserAnswer()
     const pickedWord:string|undefined = getWord(index, currentQuiz)
     const sentence:ScrambledSentence = removeWord(index, currentQuiz)
@@ -83,12 +92,21 @@ const quizModel = (sentenceManager: SentenceManager) => {
   };
 
   const unpickWord = (index: number, userAnswer: UserAnswer): void => {
+    if(!quizStatus.has("ongoing")) return
     const quiz = getCurrentQuiz()
     const pickedWord:string|undefined = getWord(index, userAnswer)
     const sentence:Sentence = removeWord(index, userAnswer)
     setUserAnswer(sentence, undefined)
     setScrambledSentence(quiz, pickedWord)
   };
+
+  const checkAnswer = ()=>{
+    const userAnswer = getUserAnswer()
+    const answer = getCorrectAnswer()
+    if(!isUserAnswerReady(userAnswer, answer)) return
+    if(!isAnswerCorrect(userAnswer, answer)) return
+    quizStatus.delete("ongoing")
+  }
 
   const getUserAnswer = (): UserAnswer => userAnswer;
 
@@ -116,7 +134,8 @@ const quizModel = (sentenceManager: SentenceManager) => {
     setScrambledSentence,
     isAnswerCorrect,
     unpickWord,
-    getCurrentQuiz
+    getCurrentQuiz,
+    checkAnswer
   };
 };
 
