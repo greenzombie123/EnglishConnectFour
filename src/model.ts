@@ -123,7 +123,7 @@ let currentPlayer: CurrentPlayer = playerOne;
 
 let gameBoard: GameBoard;
 
-console.log(quizModel.createScrambledSentence({words:["I", "eat", "rice", "everyday"],type:"correct", translation:"私は毎日ライスを食べる"}))
+// console.log(quizModel.createScrambledSentence({words:["I", "eat", "rice", "everyday"],type:"correct", translation:"私は毎日ライスを食べる"}))
 
 const setCurrentPlayer = (playerId: PlayerId) =>
   (currentPlayer = players[playerId]);
@@ -151,11 +151,6 @@ const createTile = (firstWord: string, secondWord: string): EmptyTile => ({
   sentence: [firstWord, secondWord],
   playerId: "empty",
 });
-
-const createSentence = (firstWord: string, secondWord: string) => [
-  firstWord,
-  secondWord,
-];
 
 const createGameGrid = (xWords: XAxisWords, yWords: YAxisWords): GameBoard => {
   return yWords.map((yword, yIndex) => {
@@ -371,6 +366,7 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   const player = getCurrentPlayer();
   const tile: Tile = findTile(y, x, gameBoard);
   if (!canInsertToken(tile)) return eventEmitter.emitEvent("invalidMove", [y,x])
+  // If insertable, start quiz
   const newGameBoard = insertToken(x, y, gameBoard, player);
   if (checkWinner(x, y, newGameBoard, player.playerId)) {
     console.log("WINNER");
