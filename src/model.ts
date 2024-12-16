@@ -366,12 +366,15 @@ const startGame = () => {
 };
 
 const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
+  if(gameStatus.has("quiz")) return console.log("NOPE!")
   const gameBoard = getGameBoard();
   const tile: Tile = findTile(y, x, gameBoard);
   if (!canInsertToken(tile))
     return eventEmitter.emitEvent("invalidMove", [y, x]);
+  //TODO Check here if the token will be a winner
   setCurrentEmptyTile(y,x)
   startQuiz(tile)
+  //TODO Delete this when able
   // return
   // const newGameBoard = insertToken(x, y, gameBoard, player);
   // if (checkWinner(x, y, newGameBoard, player.playerId)) {
@@ -403,6 +406,7 @@ const putTokenInTile =()=>{
   gameStatus.delete("quiz")
 }
 
+//TODO Maybe place this in the controller?
 eventEmitter.subscribe("quizFinished", putTokenInTile)
 
 const changePlayers = () =>

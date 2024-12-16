@@ -1,8 +1,11 @@
 import { ScrambledSentence, UserAnswer } from "./quizModel"
 
-type QuizView = {
+export type QuizView = {
     renderWords:(quiz:ScrambledSentence, answer:UserAnswer)=>{ssWords:HTMLDivElement[], uaWords:HTMLDivElement[]},
-    revealQuiz:()=>void
+    revealQuiz:()=>void,
+    renderTranslation:(tranlation:string)=>void,
+    hideQuiz:()=>void,
+    getResetButton:()=>HTMLButtonElement
 }
 
 const quizView = ():QuizView=>{
@@ -11,8 +14,12 @@ const quizView = ():QuizView=>{
     const scrambledSentence = quiz.querySelector(".scrambledSentence") as HTMLDivElement
     const userAnswer = quiz.querySelector(".userAnswer") as HTMLDivElement 
     const resetButton = quiz.querySelector(".resetButton") as HTMLButtonElement
+    
+    const renderTranslation = (tranlation:string)=>{question.textContent = tranlation}
 
     const renderWords = (quiz:ScrambledSentence, answer:UserAnswer):{ssWords:HTMLDivElement[], uaWords:HTMLDivElement[]}=>{
+        
+        scrambledSentence.replaceChildren()
         const ssWords:HTMLDivElement[] = quiz.words.map(word=>{
             const wordCard = document.createElement("div")
             wordCard.textContent = word
@@ -21,6 +28,7 @@ const quizView = ():QuizView=>{
             return wordCard
         }) 
 
+        userAnswer.replaceChildren()
         const uaWords:HTMLDivElement[] = answer.words.map(word=>{
             const wordCard = document.createElement("div")
             wordCard.textContent = word
@@ -33,9 +41,11 @@ const quizView = ():QuizView=>{
     }
 
     const revealQuiz = ()=> {quiz.showModal()}
+    const hideQuiz = ()=> {quiz.close()}
+    const getResetButton = ()=> resetButton
 
     // revealQuiz()
-    return {renderWords, revealQuiz}
+    return {renderWords, revealQuiz, renderTranslation, hideQuiz, getResetButton}
 }
 
 export default quizView()

@@ -2,7 +2,7 @@ import { eventEmitter } from "../../../customNodePackages/eventListenerHelper";
 import colorPickerView from "./colorPickerView";
 import colorpickerView, { ColorPickerView } from "./colorPickerView";
 import gameBoardView, { GameBoardView } from "./gameBoardView";
-import quizView from "./quizView";
+import quizView, { QuizView } from "./quizView";
 import model, {
   Color,
   GameBoard,
@@ -13,7 +13,7 @@ import model, {
   YAxisNumber,
 } from "./model";
 import { TileView } from "./tileView";
-import { ScrambledSentence, UserAnswer } from "./quizModel";
+import quizModel, { CorrectSentence, ScrambledSentence, UserAnswer } from "./quizModel";
 
 type ControllerProps = {
   gameBoardView: GameBoardView;
@@ -21,6 +21,8 @@ type ControllerProps = {
   colorPickerView:ColorPickerView,
   quizView:QuizView
 };
+
+// export type  
 
 const handleTileClick = (tileView: TileView) => () => {
   const [y, x]: [YAxisNumber, XAxisNumber] = tileView.getCoordinates();
@@ -72,16 +74,46 @@ const handleInvalidMove = ([y, x]:[y:YAxisNumber, x:XAxisNumber])=>{
   if (pickedTile) pickedTile.showInvalidMove();
 }
 
-const handleQuizStarted = ({quiz,userAnswer}:{quiz:ScrambledSentence, userAnswer:UserAnswer})=>{
+const handleQuizStarted = ({quiz,userAnswer, translation}:{quiz:ScrambledSentence, userAnswer:UserAnswer, translation:string})=>{
     const wordLists = quizView.renderWords(quiz, userAnswer)
+    quizView.renderTranslation(translation)
+    attachWorkClickHandlers(wordLists)
     quizView.revealQuiz()
 }
 
-const handlePickWord = (index:number)=>()=>{}
+const handleQuizWordClick = (index:number)=>()=>{
+    quizModel.pickWord(index)
+}
 
-const handleUnpickWord = (index:number)=>()=>{}
+const handleUserAnswerWordClick = (index:number)=>()=>{
+    quizModel.unpickWord(index)
+}
 
-const handleResetButtonClick = ()=>{}
+const handleRerenderWords = ({quiz,userAnswer}:{quiz:ScrambledSentence, userAnswer:UserAnswer}) =>{
+    const wordLists = quizView.renderWords(quiz, userAnswer)
+    attachWorkClickHandlers(wordLists)
+}
+
+const handleCloseQuiz = ()=>{
+    quizView.hideQuiz()
+}
+
+
+const handleResetButtonClick = ()=>{
+    const [quiz, userAnswer] = quizModel.resetQuiz()
+    const wordLists = quizView.renderWords(quiz, userAnswer)
+    attachWorkClickHandlers(wordLists)
+}
+
+const attachWorkClickHandlers = ({ssWords,uaWords}:{ssWords:HTMLDivElement[], uaWords:HTMLDivElement[]})=>{
+    ssWords.forEach((ssWord, index)=>{
+        ssWord.addEventListener('click', handleQuizWordClick(index))
+    })
+
+    uaWords.forEach((uaWord, index)=>{
+        uaWord.addEventListener("click", handleUserAnswerWordClick(index))
+    })
+}
 
 const controller = (props: ControllerProps) => {
   const { gameBoardView, model } = props;
@@ -120,8 +152,6 @@ const controller = (props: ControllerProps) => {
 
     handleDisallowSameColor(model.getPlayers())
 
-    // Handle starting the game
-
     // Handle wrong tile clicking
     eventEmitter.subscribe("invalidMove", handleInvalidMove)
 
@@ -129,6 +159,15 @@ const controller = (props: ControllerProps) => {
     // Handle the event when a quiz has started
     eventEmitter.subscribe("quizStarted", handleQuizStarted)
     
+    // Handle rerendering words
+    eventEmitter.subscribe("rerenderWords", handleRerenderWords)
+
+    // Handle closing the quiz dialog
+    eventEmitter.subscribe("closeQuiz", handleCloseQuiz)
+
+    // Handle resetting the quiz when reset button is pressed
+    const resetButton = quizView.getResetButton()
+    resetButton.addEventListener("click", handleResetButtonClick)
   };
 
   return { init };

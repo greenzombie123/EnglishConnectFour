@@ -10,21 +10,27 @@ export type CorrectSentence = {
 export type ScrambledSentence = { words: string[]; type: "scrambled" };
 export type UserAnswer = { words: string[]; type: "user" };
 export type Sentence = CorrectSentence | ScrambledSentence | UserAnswer;
+export type QuizData = { quiz: ScrambledSentence; userAnswer: UserAnswer };
 
 const quizModel = (sentenceManager: SentenceManager) => {
   let currentQuiz: ScrambledSentence;
   let correctAnswer: CorrectSentence;
   let userAnswer: UserAnswer = { words: [], type: "user" };
-  const quizStatus = new Set<string>()
+  const quizStatus = new Set<string>();
 
-  const startQuiz = ( yWord: YWord, xWord: XWord) => {
-    const sentence = getSentence(yWord, xWord)
-    if(sentence){
-        const quiz = createScrambledSentence(sentence)
-        makeQuiz(quiz, sentence)
-        quizStatus.add("ongoing")
-        console.log(quiz, userAnswer)
-        eventEmitter.emitEvent("quizStarted", {quiz, userAnswer})
+  const startQuiz = (yWord: YWord, xWord: XWord) => {
+    setUserAnswer({ words: [], type: "user" }, undefined)
+    const sentence = getSentence(yWord, xWord);
+    if (sentence) {
+      const quiz = createScrambledSentence(sentence);
+      makeQuiz(quiz, sentence);
+      quizStatus.add("ongoing");
+      console.log(quiz, userAnswer);
+      eventEmitter.emitEvent("quizStarted", {
+        quiz,
+        userAnswer,
+        translation: sentence.translation,
+      });
     }
   };
 
@@ -38,7 +44,7 @@ const quizModel = (sentenceManager: SentenceManager) => {
   const createScrambledSentence = (
     sentence: CorrectSentence,
   ): ScrambledSentence => {
-    const words = [...sentence.words]
+    const words = [...sentence.words];
 
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -56,20 +62,23 @@ const quizModel = (sentenceManager: SentenceManager) => {
     sentence.words[index];
 
   const removeWord = <T extends Sentence>(index: number, sentence: T): T => {
-    const newSentence = {...sentence}
+    const newSentence = { ...sentence };
     newSentence.words = newSentence.words.filter((word, i) => i !== index);
-    return newSentence
+    return newSentence;
   };
 
-  const setUserAnswer = (answer: UserAnswer, word: string|undefined ) => {
+  const setUserAnswer = (answer: UserAnswer, word: string | undefined) => {
     const newUserAnswer: UserAnswer = { ...answer };
-    if(word) newUserAnswer.words.push(word);
+    if (word) newUserAnswer.words.push(word);
     userAnswer = { ...newUserAnswer };
   };
 
-  const setScrambledSentence = (scrambled: ScrambledSentence,word: string|undefined) => {
+  const setScrambledSentence = (
+    scrambled: ScrambledSentence,
+    word: string | undefined,
+  ) => {
     const newScrambled: ScrambledSentence = { ...scrambled };
-    if(word) newScrambled.words.push(word);
+    if (word) newScrambled.words.push(word);
     currentQuiz = { ...newScrambled };
   };
 
@@ -85,34 +94,44 @@ const quizModel = (sentenceManager: SentenceManager) => {
     return true;
   };
 
-  const pickWord = (index: number, currentQuiz: ScrambledSentence): void => {
-    if(!quizStatus.has("ongoing")) return
-    const userAnswer = getUserAnswer()
-    const pickedWord:string|undefined = getWord(index, currentQuiz)
-    const sentence:ScrambledSentence = removeWord(index, currentQuiz)
-    setUserAnswer(userAnswer, pickedWord)
-    setScrambledSentence(sentence, undefined)
-    checkAnswer()
+  const pickWord = (index: number): void => {
+    if (!quizStatus.has("ongoing")) return;
+    const userAnswer = getUserAnswer();
+    const currentQuiz = getCurrentQuiz();
+    const pickedWord: string | undefined = getWord(index, currentQuiz);
+    const sentence: ScrambledSentence = removeWord(index, currentQuiz);
+    setUserAnswer(userAnswer, pickedWord);
+    setScrambledSentence(sentence, undefined);
+    checkAnswer();
   };
 
-  const unpickWord = (index: number, userAnswer: UserAnswer): void => {
-    if(!quizStatus.has("ongoing")) return
-    const quiz = getCurrentQuiz()
-    const pickedWord:string|undefined = getWord(index, userAnswer)
-    const sentence:UserAnswer = removeWord(index, userAnswer)
-    console.log(1,sentence, pickedWord)
-    setUserAnswer(sentence, undefined)
-    setScrambledSentence(quiz, pickedWord)
-    checkAnswer()
+  const unpickWord = (index: number): void => {
+    if (!quizStatus.has("ongoing")) return;
+    const quiz = getCurrentQuiz();
+    const userAnswer = getUserAnswer();
+    const pickedWord: string | undefined = getWord(index, userAnswer);
+    const sentence: UserAnswer = removeWord(index, userAnswer);
+    console.log(1, sentence, pickedWord);
+    setUserAnswer(sentence, undefined);
+    setScrambledSentence(quiz, pickedWord);
+    checkAnswer();
   };
 
-  const checkAnswer = ()=>{
-    const userAnswer = getUserAnswer()
-    const answer = getCorrectAnswer()
-    if(!isAnswerCorrect(userAnswer, answer)) return //!Rerender words
-    quizStatus.delete("ongoing")
-    eventEmitter.emitEvent("quizFinished")
-  }
+  const checkAnswer = () => {
+    const userAnswer = getUserAnswer();
+    const answer = getCorrectAnswer();
+    if (!isAnswerCorrect(userAnswer, answer)) {
+      //!Rerender words
+      eventEmitter.emitEvent("rerenderWords", {
+        quiz: getCurrentQuiz(),
+        userAnswer,
+      });
+      return;
+    }
+    quizStatus.delete("ongoing");
+    eventEmitter.emitEvent("quizFinished");
+    eventEmitter.emitEvent("closeQuiz")
+  };
 
   const getUserAnswer = (): UserAnswer => userAnswer;
 
@@ -125,7 +144,20 @@ const quizModel = (sentenceManager: SentenceManager) => {
     answer: CorrectSentence,
   ): boolean => userAnswer.words.length === answer.words.length;
 
-  const testStartQuiz = ()=> {quizStatus.add("ongoing")}
+  const testStartQuiz = () => {
+    quizStatus.add("ongoing");
+  };
+
+  const resetQuiz = ():[ScrambledSentence, UserAnswer]=>{
+    const quiz = getCurrentQuiz()
+    const playerAnswer = getUserAnswer()
+    const newQuizWords = [...quiz.words, ...playerAnswer.words]
+
+    setScrambledSentence({words:[...newQuizWords], type:"scrambled"}, undefined)
+    setUserAnswer({words:[], type:"user"}, undefined)
+
+    return [{words:[...newQuizWords], type:"scrambled"}, {words:[], type:"user"}]
+  }
 
   return {
     startQuiz,
@@ -144,7 +176,8 @@ const quizModel = (sentenceManager: SentenceManager) => {
     unpickWord,
     getCurrentQuiz,
     checkAnswer,
-    testStartQuiz
+    testStartQuiz,
+    resetQuiz,
   };
 };
 

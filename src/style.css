@@ -19,6 +19,7 @@ body{
         align-items: center;
 
         .gameBoard{
+            cursor: pointer;
 
             .row{
                 position: relative;
@@ -30,6 +31,7 @@ body{
                     border: 1px black solid;
                     width: 120px;
                     height: 100px;
+                    cursor: pointer;
 
                     &.invalid{
                         animation: .2s ease-in invalid;
@@ -169,6 +171,7 @@ dialog.colorPicker{
                         width: 30px;
                         height: 30px;
                         border-radius: 50%;
+                        cursor: pointer;
                     }
     
                     .notAllowed{
@@ -213,6 +216,7 @@ dialog.colorPicker{
             font-size: 25px;
             padding: 10px 20px;
             width: fit-content;
+            cursor: pointer;
         }
     }
 }
@@ -242,8 +246,12 @@ dialog.quiz{
                 align-content: center;
                 font-size: 50px;
                 border-radius: 5px;
-                box-shadow: 4px 2px 0px 2px #898484;};
+                box-shadow: 4px 2px 0px 2px #898484;
                 font-family: "Fredoka", sans-serif;
+                cursor: pointer;
+            };
+                
+                
         }
 
         .userAnswer{
@@ -259,6 +267,7 @@ dialog.quiz{
                 border: none;
                 box-shadow: 2px 2px 1px #adadad;
                 font-family: "Fredoka";
+                cursor: pointer;
             }
         }
     }
