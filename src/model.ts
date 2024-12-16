@@ -125,6 +125,8 @@ let gameBoard: GameBoard;
 
 const gameStatus = new Set<"quiz" | "game" | "end">();
 
+let currentEmptyTile:[YAxisNumber, XAxisNumber]
+
 // console.log(quizModel.createScrambledSentence({words:["I", "eat", "rice", "everyday"],type:"correct", translation:"私は毎日ライスを食べる"}))
 
 const setCurrentPlayer = (playerId: PlayerId) =>
@@ -365,13 +367,32 @@ const startGame = () => {
 
 const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   const gameBoard = getGameBoard();
-  const player = getCurrentPlayer();
+  // const player = getCurrentPlayer();
   const tile: Tile = findTile(y, x, gameBoard);
   if (!canInsertToken(tile))
     return eventEmitter.emitEvent("invalidMove", [y, x]);
   // If insertable, start quiz
+  setCurrentEmptyTile(y,x)
   startQuiz(tile)
-  return
+  // return
+  // const newGameBoard = insertToken(x, y, gameBoard, player);
+  // if (checkWinner(x, y, newGameBoard, player.playerId)) {
+  //   console.log("WINNER");
+  // }
+  // if (isAboveTileInsertable(y, x, newGameBoard))
+  //   makeTileInsertable(x, y, newGameBoard);
+
+  // eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
+  // changePlayers();
+};
+
+const setCurrentEmptyTile = (y: YAxisNumber, x: XAxisNumber)=> {currentEmptyTile = [y,x] }
+const getCurrentEmptyTile = ()=> currentEmptyTile
+
+const putTokenInTile =()=>{
+  const [y,x] = getCurrentEmptyTile()
+  const gameBoard = getGameBoard();
+  const player = getCurrentPlayer();
   const newGameBoard = insertToken(x, y, gameBoard, player);
   if (checkWinner(x, y, newGameBoard, player.playerId)) {
     console.log("WINNER");
@@ -381,7 +402,10 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
 
   eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
   changePlayers();
-};
+  gameStatus.delete("quiz")
+}
+
+eventEmitter.subscribe("quizFinished", putTokenInTile)
 
 const changePlayers = () =>
   (currentPlayer = currentPlayer.playerId === 1 ? players[2] : players[1]);
@@ -438,6 +462,26 @@ const model: Model = {
   pickWord,
   unpickWord
 };
+
+startGame()
+pickTile(0,0)
+// console.log(gameBoard)
+console.log(quizModel.getCorrectAnswer().words)
+console.log(quizModel.getCurrentQuiz().words)
+console.log(quizModel.getUserAnswer().words)
+console.log(pickWord(0, quizModel.getCurrentQuiz()))
+console.log(quizModel.getCurrentQuiz().words)
+console.log(quizModel.getUserAnswer().words)
+console.log(pickWord(0, quizModel.getCurrentQuiz()))
+console.log(quizModel.getCurrentQuiz().words)
+console.log(quizModel.getUserAnswer().words)
+console.log(pickWord(0, quizModel.getCurrentQuiz()))
+console.log(quizModel.getCurrentQuiz().words)
+console.log(quizModel.getUserAnswer().words)
+console.log(pickWord(0, quizModel.getCurrentQuiz()))
+console.log(quizModel.getCurrentQuiz().words)
+console.log(quizModel.getUserAnswer().words)
+console.log(gameBoard)
 
 export default model;
 

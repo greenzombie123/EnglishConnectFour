@@ -1,3 +1,4 @@
+import { eventEmitter } from "../../../customNodePackages/eventListenerHelper";
 import { XWord, YWord } from "./model";
 import sentenceManager, { SentenceManager } from "./sentences";
 
@@ -16,7 +17,7 @@ const quizModel = (sentenceManager: SentenceManager) => {
   let userAnswer: UserAnswer = { words: [], type: "user" };
   const quizStatus = new Set<string>()
 
-  const startQuiz = (yWord: YWord, xWord: XWord) => {
+  const startQuiz = ( yWord: YWord, xWord: XWord) => {
     const sentence = getSentence(yWord, xWord)
     if(sentence){
         const quiz = createScrambledSentence(sentence)
@@ -108,8 +109,7 @@ const quizModel = (sentenceManager: SentenceManager) => {
     const answer = getCorrectAnswer()
     if(!isAnswerCorrect(userAnswer, answer)) return
     quizStatus.delete("ongoing")
-    // console.log(answer)
-    console.log("NICE")
+    eventEmitter.emitEvent("quizFinished")
   }
 
   const getUserAnswer = (): UserAnswer => userAnswer;
