@@ -23,6 +23,8 @@ const quizModel = (sentenceManager: SentenceManager) => {
         const quiz = createScrambledSentence(sentence)
         makeQuiz(quiz, sentence)
         quizStatus.add("ongoing")
+        console.log(quiz, userAnswer)
+        eventEmitter.emitEvent("quizStarted", {quiz, userAnswer})
     }
   };
 
@@ -107,7 +109,7 @@ const quizModel = (sentenceManager: SentenceManager) => {
   const checkAnswer = ()=>{
     const userAnswer = getUserAnswer()
     const answer = getCorrectAnswer()
-    if(!isAnswerCorrect(userAnswer, answer)) return
+    if(!isAnswerCorrect(userAnswer, answer)) return //!Rerender words
     quizStatus.delete("ongoing")
     eventEmitter.emitEvent("quizFinished")
   }

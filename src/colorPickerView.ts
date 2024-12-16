@@ -53,6 +53,7 @@ const colorpickerView = (): ColorPickerView => {
     });
   };
 
+  //* Temporarily comment out
   revealColorPicker();
 
   return {

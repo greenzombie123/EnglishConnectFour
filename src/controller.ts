@@ -2,6 +2,7 @@ import { eventEmitter } from "../../../customNodePackages/eventListenerHelper";
 import colorPickerView from "./colorPickerView";
 import colorpickerView, { ColorPickerView } from "./colorPickerView";
 import gameBoardView, { GameBoardView } from "./gameBoardView";
+import quizView from "./quizView";
 import model, {
   Color,
   GameBoard,
@@ -12,11 +13,13 @@ import model, {
   YAxisNumber,
 } from "./model";
 import { TileView } from "./tileView";
+import { ScrambledSentence, UserAnswer } from "./quizModel";
 
 type ControllerProps = {
   gameBoardView: GameBoardView;
   model: Model;
-  colorPickerView:ColorPickerView
+  colorPickerView:ColorPickerView,
+  quizView:QuizView
 };
 
 const handleTileClick = (tileView: TileView) => () => {
@@ -69,7 +72,16 @@ const handleInvalidMove = ([y, x]:[y:YAxisNumber, x:XAxisNumber])=>{
   if (pickedTile) pickedTile.showInvalidMove();
 }
 
+const handleQuizStarted = ({quiz,userAnswer}:{quiz:ScrambledSentence, userAnswer:UserAnswer})=>{
+    const wordLists = quizView.renderWords(quiz, userAnswer)
+    quizView.revealQuiz()
+}
 
+const handlePickWord = (index:number)=>()=>{}
+
+const handleUnpickWord = (index:number)=>()=>{}
+
+const handleResetButtonClick = ()=>{}
 
 const controller = (props: ControllerProps) => {
   const { gameBoardView, model } = props;
@@ -114,6 +126,8 @@ const controller = (props: ControllerProps) => {
     eventEmitter.subscribe("invalidMove", handleInvalidMove)
 
 
+    // Handle the event when a quiz has started
+    eventEmitter.subscribe("quizStarted", handleQuizStarted)
     
   };
 
@@ -123,7 +137,8 @@ const controller = (props: ControllerProps) => {
 const props: ControllerProps = {
   gameBoardView: gameBoardView,
   model: model,
-  colorPickerView:colorPickerView
+  colorPickerView:colorPickerView,
+  quizView:quizView
 };
 
 export default controller(props);

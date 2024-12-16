@@ -367,11 +367,9 @@ const startGame = () => {
 
 const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   const gameBoard = getGameBoard();
-  // const player = getCurrentPlayer();
   const tile: Tile = findTile(y, x, gameBoard);
   if (!canInsertToken(tile))
     return eventEmitter.emitEvent("invalidMove", [y, x]);
-  // If insertable, start quiz
   setCurrentEmptyTile(y,x)
   startQuiz(tile)
   // return
@@ -463,25 +461,25 @@ const model: Model = {
   unpickWord
 };
 
-startGame()
-pickTile(0,0)
+// startGame()
+// pickTile(0,0)
+// // console.log(gameBoard)
+// console.log(quizModel.getCorrectAnswer().words)
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
 // console.log(gameBoard)
-console.log(quizModel.getCorrectAnswer().words)
-console.log(quizModel.getCurrentQuiz().words)
-console.log(quizModel.getUserAnswer().words)
-console.log(pickWord(0, quizModel.getCurrentQuiz()))
-console.log(quizModel.getCurrentQuiz().words)
-console.log(quizModel.getUserAnswer().words)
-console.log(pickWord(0, quizModel.getCurrentQuiz()))
-console.log(quizModel.getCurrentQuiz().words)
-console.log(quizModel.getUserAnswer().words)
-console.log(pickWord(0, quizModel.getCurrentQuiz()))
-console.log(quizModel.getCurrentQuiz().words)
-console.log(quizModel.getUserAnswer().words)
-console.log(pickWord(0, quizModel.getCurrentQuiz()))
-console.log(quizModel.getCurrentQuiz().words)
-console.log(quizModel.getUserAnswer().words)
-console.log(gameBoard)
 
 export default model;
 
