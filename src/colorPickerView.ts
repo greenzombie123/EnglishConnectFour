@@ -40,7 +40,6 @@ const colorpickerView = (): ColorPickerView => {
   ];
   const getButton = () => button;
   const disallowSameColors = (playerOne: Player, playerTwo: Player) => {
-    console.log(1)
     playerOneColorDots.forEach((colorDot) => {
       if (colorDot.classList[0] === playerTwo.color)
         colorDot.classList.add("notAllowed");

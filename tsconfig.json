@@ -10,6 +10,7 @@
     "noUncheckedIndexedAccess": true,
     "typeRoots": ["src/@types", "node_modules/@types"],
     "moduleResolution": "nodenext",
+    "noImplicitReturns":true,
     // "declaration": true,
     "baseUrl": ".",
     "paths": {

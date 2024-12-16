@@ -1,5 +1,6 @@
 import { eventEmitter } from "eventlistenerhelper";
-import quizModel from "./quizModel";
+import quizModel, { ScrambledSentence, UserAnswer } from "./quizModel";
+import sentenceManager from "./sentences";
 
 export type Player = {
   playerId: 1 | 2;
@@ -38,9 +39,9 @@ const xWords = [
   "watch",
   "listen",
   "buy",
-] as const
+] as const;
 
-export type XWord = typeof xWords[number]
+export type XWord = (typeof xWords)[number];
 
 export type XAxisWords = [
   XWord,
@@ -55,9 +56,9 @@ export type XAxisWords = [
   XWord,
 ];
 
-const yWords = ["I", "He", "She", "You", "They", "We"] as const
+const yWords = ["I", "He", "She", "You", "They", "We"] as const;
 
-export type YWord = typeof yWords[number]
+export type YWord = (typeof yWords)[number];
 
 export type YAxisWords = [YWord, YWord, YWord, YWord, YWord, YWord];
 
@@ -82,7 +83,7 @@ export type Color =
   | "nocolor";
 export type TileColor = Color | "nocolor";
 
-export type Sentence = string[];
+export type Sentence = [YWord, XWord];
 
 export type GameStatus = "playing" | "setUp" | "gameover";
 
@@ -99,8 +100,7 @@ const xAxisWords: XAxisWords = [
   "watch",
   "listen",
   "buy",
-]
-
+];
 
 const yAxisWords: YAxisWords = ["I", "He", "She", "You", "They", "We"];
 
@@ -123,6 +123,8 @@ let currentPlayer: CurrentPlayer = playerOne;
 
 let gameBoard: GameBoard;
 
+const gameStatus = new Set<"quiz" | "game" | "end">();
+
 // console.log(quizModel.createScrambledSentence({words:["I", "eat", "rice", "everyday"],type:"correct", translation:"私は毎日ライスを食べる"}))
 
 const setCurrentPlayer = (playerId: PlayerId) =>
@@ -130,22 +132,22 @@ const setCurrentPlayer = (playerId: PlayerId) =>
 
 const getCurrentPlayer = () => currentPlayer;
 
-const arePlayersSameColor = (playerId: PlayerId, color: Color)=>{
-  const newPlayers = {...players}
-  const otherPlayerId = playerId === 1 ? 2 : 1
-  newPlayers[playerId].color = color
-  return newPlayers[playerId].color === newPlayers[otherPlayerId].color
-}
+const arePlayersSameColor = (playerId: PlayerId, color: Color) => {
+  const newPlayers = { ...players };
+  const otherPlayerId = playerId === 1 ? 2 : 1;
+  newPlayers[playerId].color = color;
+  return newPlayers[playerId].color === newPlayers[otherPlayerId].color;
+};
 
 const setPlayerColor = (playerId: PlayerId, color: Color) => {
-  if(arePlayersSameColor(playerId, color)) return
+  if (arePlayersSameColor(playerId, color)) return;
   players[playerId] = { ...players[playerId], color };
-  eventEmitter.emitEvent("choseColor", {...players[playerId]})
-  eventEmitter.emitEvent("disallowSameColor", getPlayers())
+  eventEmitter.emitEvent("choseColor", { ...players[playerId] });
+  eventEmitter.emitEvent("disallowSameColor", getPlayers());
 };
 const getPlayers = () => players;
 
-const createTile = (firstWord: string, secondWord: string): EmptyTile => ({
+const createTile = (firstWord: YWord, secondWord: XWord): EmptyTile => ({
   color: "nocolor",
   canInsert: false,
   sentence: [firstWord, secondWord],
@@ -307,7 +309,7 @@ const setGameBoard = (newGameBoard: GameBoard) => {
   gameBoard = newGameBoard;
 };
 
-const canInsertToken = (tile: Tile): boolean =>
+const canInsertToken = (tile: Tile): tile is EmptyTile =>
   tile.playerId === "empty" && tile.canInsert;
 
 const isAboveTileInsertable = (
@@ -365,8 +367,11 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   const gameBoard = getGameBoard();
   const player = getCurrentPlayer();
   const tile: Tile = findTile(y, x, gameBoard);
-  if (!canInsertToken(tile)) return eventEmitter.emitEvent("invalidMove", [y,x])
+  if (!canInsertToken(tile))
+    return eventEmitter.emitEvent("invalidMove", [y, x]);
   // If insertable, start quiz
+  startQuiz(tile)
+  return
   const newGameBoard = insertToken(x, y, gameBoard, player);
   if (checkWinner(x, y, newGameBoard, player.playerId)) {
     console.log("WINNER");
@@ -380,9 +385,6 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
 
 const changePlayers = () =>
   (currentPlayer = currentPlayer.playerId === 1 ? players[2] : players[1]);
-const gameStop = () => {};
-
-const printOutBoard = () => console.log(gameBoard);
 
 const checkWinner = (
   x: XAxisNumber,
@@ -396,7 +398,20 @@ const checkWinner = (
 
 const getAxisWords = (): [XAxisWords, YAxisWords] => [xAxisWords, yAxisWords];
 
-const startQuiz = ()=>{}
+const startQuiz = (tile: EmptyTile) => {
+  gameStatus.add("quiz");
+  const [yWord, xWord]: [YWord, XWord] = tile.sentence;
+  quizModel.startQuiz(yWord, xWord);
+};
+
+// Abstractions for quizModel pickWord and unpickWord methods
+const pickWord = ((
+  pickWord: (index: number, currentQuiz: ScrambledSentence) => void,
+) => pickWord)(quizModel.pickWord);
+
+const unpickWord =( (
+  unpickWord: (index: number, userAnswer: UserAnswer) => void,
+) => unpickWord)(quizModel.unpickWord)
 
 export type Model = {
   getAxisWords: () => [XAxisWords, YAxisWords];
@@ -408,7 +423,9 @@ export type Model = {
   getGameBoard: () => GameBoard;
   startGame: () => void;
   setPlayerColor: (playerId: PlayerId, color: Color) => void;
-  getPlayers:()=>{1:Player, 2:Player}
+  getPlayers: () => { 1: Player; 2: Player };
+  pickWord: (index: number, currentQuiz: ScrambledSentence) => void;
+  unpickWord: (index: number, userAnswer: UserAnswer) => void;
 };
 
 const model: Model = {
@@ -417,7 +434,9 @@ const model: Model = {
   getGameBoard,
   startGame,
   setPlayerColor,
-  getPlayers
+  getPlayers,
+  pickWord,
+  unpickWord
 };
 
 export default model;
@@ -445,3 +464,28 @@ export {
   isAboveTileInsertable,
   getAxisWords,
 };
+
+// startGame()
+// pickTile(0,0)
+// // console.log(gameBoard)
+// console.log(quizModel.getCorrectAnswer().words)
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(pickWord(0, quizModel.getCurrentQuiz()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(unpickWord(0, quizModel.getUserAnswer()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)
+// console.log(unpickWord(2, quizModel.getUserAnswer()))
+// console.log(quizModel.getCurrentQuiz().words)
+// console.log(quizModel.getUserAnswer().words)

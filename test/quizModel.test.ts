@@ -78,7 +78,7 @@ describe("pickWord", ()=>{
         const correctSentence:CorrectSentence = {words:["I", "eat", "rice", "everyday"], type:"correct", translation:"私は毎日ライスを食べる"}
         const scrambledSentence:ScrambledSentence = {words:["eat", "I", "everyday", "rice"], type:"scrambled"}
         quizModel.makeQuiz(scrambledSentence, correctSentence)
-
+        quizModel.testStartQuiz()
         quizModel.pickWord(2, scrambledSentence)
 
         const quiz:ScrambledSentence = quizModel.getCurrentQuiz()
@@ -96,6 +96,7 @@ describe("unpickWord", ()=>{
 
         quizModel.setScrambledSentence(scrambledSentence, undefined)
         quizModel.setUserAnswer(answer, undefined)
+        quizModel.testStartQuiz()
 
         quizModel.unpickWord(1, answer)
 

@@ -35,7 +35,7 @@ const quizModel = (sentenceManager: SentenceManager) => {
   const createScrambledSentence = (
     sentence: CorrectSentence,
   ): ScrambledSentence => {
-    const words = sentence.words;
+    const words = [...sentence.words]
 
     for (let i = words.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -89,23 +89,27 @@ const quizModel = (sentenceManager: SentenceManager) => {
     const sentence:ScrambledSentence = removeWord(index, currentQuiz)
     setUserAnswer(userAnswer, pickedWord)
     setScrambledSentence(sentence, undefined)
+    checkAnswer()
   };
 
   const unpickWord = (index: number, userAnswer: UserAnswer): void => {
     if(!quizStatus.has("ongoing")) return
     const quiz = getCurrentQuiz()
     const pickedWord:string|undefined = getWord(index, userAnswer)
-    const sentence:Sentence = removeWord(index, userAnswer)
+    const sentence:UserAnswer = removeWord(index, userAnswer)
+    console.log(1,sentence, pickedWord)
     setUserAnswer(sentence, undefined)
     setScrambledSentence(quiz, pickedWord)
+    checkAnswer()
   };
 
   const checkAnswer = ()=>{
     const userAnswer = getUserAnswer()
     const answer = getCorrectAnswer()
-    if(!isUserAnswerReady(userAnswer, answer)) return
     if(!isAnswerCorrect(userAnswer, answer)) return
     quizStatus.delete("ongoing")
+    // console.log(answer)
+    console.log("NICE")
   }
 
   const getUserAnswer = (): UserAnswer => userAnswer;
@@ -118,6 +122,8 @@ const quizModel = (sentenceManager: SentenceManager) => {
     userAnswer: UserAnswer,
     answer: CorrectSentence,
   ): boolean => userAnswer.words.length === answer.words.length;
+
+  const testStartQuiz = ()=> {quizStatus.add("ongoing")}
 
   return {
     startQuiz,
@@ -135,7 +141,8 @@ const quizModel = (sentenceManager: SentenceManager) => {
     isAnswerCorrect,
     unpickWord,
     getCurrentQuiz,
-    checkAnswer
+    checkAnswer,
+    testStartQuiz
   };
 };
 
