@@ -236,7 +236,7 @@ dialog.quiz{
         .scrambledSentence, .userAnswer{
             display: flex;
             flex-flow: row wrap;
-            height: 100px;
+            min-height: 100px;
             gap: 20px;
 
             .word{
@@ -249,6 +249,7 @@ dialog.quiz{
                 box-shadow: 4px 2px 0px 2px #898484;
                 font-family: "Fredoka", sans-serif;
                 cursor: pointer;
+                height: 100px;
             };
                 
                 

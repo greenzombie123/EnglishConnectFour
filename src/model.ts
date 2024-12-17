@@ -375,7 +375,6 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   setCurrentEmptyTile(y,x)
   startQuiz(tile)
   //TODO Delete this when able
-  // return
   // const newGameBoard = insertToken(x, y, gameBoard, player);
   // if (checkWinner(x, y, newGameBoard, player.playerId)) {
   //   console.log("WINNER");
