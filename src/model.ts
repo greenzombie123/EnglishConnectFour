@@ -89,6 +89,23 @@ export type GameStatus = "playing" | "setUp" | "gameover";
 
 export type PlayerId = 1 | 2;
 
+export type FourCoodinates = [
+  [YAxisNumber, XAxisNumber],
+  [YAxisNumber, XAxisNumber],
+  [YAxisNumber, XAxisNumber],
+  [YAxisNumber, XAxisNumber],
+];
+
+export type Winner = {
+  coordinates: FourCoodinates;
+  player: Player;
+  winner: "winner";
+};
+
+export type NoWinner = false;
+
+export type GameResult = Winner | NoWinner;
+
 const xAxisWords: XAxisWords = [
   "eat",
   "drink",
@@ -125,7 +142,7 @@ let gameBoard: GameBoard;
 
 const gameStatus = new Set<"quiz" | "game" | "end">();
 
-let currentEmptyTile:[YAxisNumber, XAxisNumber]
+let currentEmptyTile: [YAxisNumber, XAxisNumber];
 
 // console.log(quizModel.createScrambledSentence({words:["I", "eat", "rice", "everyday"],type:"correct", translation:"私は毎日ライスを食べる"}))
 
@@ -181,7 +198,7 @@ const checkHorizontalLine = (
   targetX: XAxisNumber,
   gameBoard: GameBoard,
   playerId: 1 | 2,
-): boolean =>
+): GameResult =>
   isHorizontalLineWinner(targetY, targetX, gameBoard, 0, playerId) ||
   isHorizontalLineWinner(targetY, targetX, gameBoard, -1, playerId) ||
   isHorizontalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
@@ -192,7 +209,7 @@ const checkVerticalLine = (
   targetX: XAxisNumber,
   gameBoard: GameBoard,
   playerId: 1 | 2,
-): boolean =>
+): GameResult =>
   isVerticalLineWinner(targetY, targetX, gameBoard, 0, playerId) ||
   isVerticalLineWinner(targetY, targetX, gameBoard, -1, playerId) ||
   isVerticalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
@@ -203,7 +220,7 @@ const checkDiagonalLine = (
   targetX: XAxisNumber,
   gameBoard: GameBoard,
   playerId: 1 | 2,
-): boolean =>
+): GameResult =>
   isDiagonalLineWinner(targetY, targetX, gameBoard, 0, playerId) ||
   isDiagonalLineWinner(targetY, targetX, gameBoard, -1, playerId) ||
   isDiagonalLineWinner(targetY, targetX, gameBoard, -2, playerId) ||
@@ -221,14 +238,21 @@ const isHorizontalLineWinner = (
   gameBoard: GameBoard,
   counter: CounterNumber,
   currentPlayerId: 1 | 2,
-): boolean => {
+): GameResult => {
+  const coordinates: [YAxisNumber, XAxisNumber][] = [];
+
   for (let x = counter + targetX; x <= 3 + counter + targetX; x++) {
     if (!isHLineWithinGameBoard(x)) return false;
     const tile: Tile = findTile(targetY, x, gameBoard);
     if (tile.playerId !== currentPlayerId) return false;
-  }
 
-  return true;
+    coordinates.push([targetY, x]);
+  }
+  return {
+    coordinates: coordinates as FourCoodinates,
+    winner: "winner",
+    player: getCurrentPlayer(),
+  };
 };
 
 const isVerticalLineWinner = (
@@ -237,14 +261,21 @@ const isVerticalLineWinner = (
   gameBoard: GameBoard,
   counter: CounterNumber,
   currentPlayerId: 1 | 2,
-): boolean => {
+): GameResult => {
+  const coordinates: [YAxisNumber, XAxisNumber][] = [];
+
   for (let y = counter + targetY; y <= 3 + counter + targetY; y++) {
     if (!isVLineWithinGameBoard(y)) return false;
     const tile: Tile = findTile(y, targetX, gameBoard);
     if (tile.playerId !== currentPlayerId) return false;
-  }
 
-  return true;
+    coordinates.push([y, targetX]);
+  }
+  return {
+    coordinates: coordinates as FourCoodinates,
+    winner: "winner",
+    player: getCurrentPlayer(),
+  };
 };
 
 const isDiagonalLineWinner = (
@@ -253,9 +284,11 @@ const isDiagonalLineWinner = (
   gameBoard: GameBoard,
   counter: CounterNumber,
   currentPlayerId: 1 | 2,
-): boolean => {
+): GameResult => {
   let startingX: number = targetX + counter;
   let startingY: number = targetY + counter;
+
+  const coordinates: [YAxisNumber, XAxisNumber][] = [];
 
   for (let index = 0; index <= 3; index++) {
     if (
@@ -267,11 +300,17 @@ const isDiagonalLineWinner = (
     const tile: Tile = findTile(startingY, startingX, gameBoard);
     if (tile.playerId !== currentPlayerId) return false;
 
+    coordinates.push([startingY, startingX]);
+
     startingX++;
     startingY++;
   }
 
-  return true;
+  return {
+    coordinates: coordinates as FourCoodinates,
+    winner: "winner",
+    player: getCurrentPlayer(),
+  };
 };
 
 const isOppositeDiagonalLineWinner = (
@@ -280,9 +319,11 @@ const isOppositeDiagonalLineWinner = (
   gameBoard: GameBoard,
   counter: CounterNumber,
   currentPlayerId: 1 | 2,
-): boolean => {
-  let startingX: number = targetX + -counter;
-  let startingY: number = targetY + counter;
+): GameResult => {
+  let startingX: number = targetX + counter;
+  let startingY: number = targetY + -counter;
+
+  const coordinates: [YAxisNumber, XAxisNumber][] = [];
 
   for (let index = 0; index <= 3; index++) {
     if (
@@ -291,14 +332,23 @@ const isOppositeDiagonalLineWinner = (
     )
       return false;
 
+
+    // coordinates.push([startingY, startingX]);
+    console.log(coordinates, currentPlayerId)
     const tile: Tile = findTile(startingY, startingX, gameBoard);
     if (tile.playerId !== currentPlayerId) return false;
+
+    // coordinates.push([startingY, startingX]);
 
     startingX++;
     startingY--;
   }
 
-  return true;
+  return {
+    coordinates: coordinates as FourCoodinates,
+    winner: "winner",
+    player: getCurrentPlayer(),
+  };
 };
 
 const isHLineWithinGameBoard = (targetX: number): targetX is XAxisNumber =>
@@ -366,57 +416,79 @@ const startGame = () => {
 };
 
 const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
-  if(gameStatus.has("quiz")) return console.log("NOPE!")
+  if (gameStatus.has("quiz")) return console.log("NOPE!");
   const gameBoard = getGameBoard();
   const tile: Tile = findTile(y, x, gameBoard);
   if (!canInsertToken(tile))
     return eventEmitter.emitEvent("invalidMove", [y, x]);
   //TODO Check here if the token will be a winner
-  setCurrentEmptyTile(y,x)
-  startQuiz(tile)
+  // setCurrentEmptyTile(y, x);
+  // startQuiz(tile);
+  // return
   //TODO Delete this when able
-  // const newGameBoard = insertToken(x, y, gameBoard, player);
-  // if (checkWinner(x, y, newGameBoard, player.playerId)) {
-  //   console.log("WINNER");
-  // }
-  // if (isAboveTileInsertable(y, x, newGameBoard))
-  //   makeTileInsertable(x, y, newGameBoard);
-
-  // eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
-  // changePlayers();
-};
-
-const setCurrentEmptyTile = (y: YAxisNumber, x: XAxisNumber)=> {currentEmptyTile = [y,x] }
-const getCurrentEmptyTile = ()=> currentEmptyTile
-
-const putTokenInTile =()=>{
-  const [y,x] = getCurrentEmptyTile()
-  const gameBoard = getGameBoard();
   const player = getCurrentPlayer();
   const newGameBoard = insertToken(x, y, gameBoard, player);
-  if (checkWinner(x, y, newGameBoard, player.playerId)) {
-    console.log("WINNER");
+  const gameResult: GameResult = checkWinner(
+    x,
+    y,
+    newGameBoard,
+    player.playerId,
+  );
+  // console.log(gameResult)
+  if (gameResult) {
+    console.log("WINNER", gameResult);
+    eventEmitter.emitEvent("gameSet", gameResult)
   }
   if (isAboveTileInsertable(y, x, newGameBoard))
     makeTileInsertable(x, y, newGameBoard);
 
   eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
   changePlayers();
-  gameStatus.delete("quiz")
-}
+  gameStatus.delete("quiz");
+};
+
+const setCurrentEmptyTile = (y: YAxisNumber, x: XAxisNumber) => {
+  currentEmptyTile = [y, x];
+};
+const getCurrentEmptyTile = () => currentEmptyTile;
+
+const putTokenInTile = () => {
+  const [y, x] = getCurrentEmptyTile();
+  const gameBoard = getGameBoard();
+  const player = getCurrentPlayer();
+  const newGameBoard = insertToken(x, y, gameBoard, player);
+  const gameResult: GameResult = checkWinner(
+    x,
+    y,
+    newGameBoard,
+    player.playerId,
+  );
+  if (gameResult) {
+    console.log("WINNER", gameResult);
+    eventEmitter.emitEvent("gameSet", gameResult)
+  }
+  if (isAboveTileInsertable(y, x, newGameBoard))
+    makeTileInsertable(x, y, newGameBoard);
+
+  eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
+  changePlayers();
+  gameStatus.delete("quiz");
+};
 
 //TODO Maybe place this in the controller?
-eventEmitter.subscribe("quizFinished", putTokenInTile)
+eventEmitter.subscribe("quizFinished", putTokenInTile);
 
 const changePlayers = () =>
   (currentPlayer = currentPlayer.playerId === 1 ? players[2] : players[1]);
 
+//! Return 4 coordinates that make a row
+//? Winner
 const checkWinner = (
   x: XAxisNumber,
   y: YAxisNumber,
   gameBoard: GameBoard,
   playerId: PlayerId,
-) =>
+): GameResult =>
   checkVerticalLine(y, x, gameBoard, playerId) ||
   checkHorizontalLine(y, x, gameBoard, playerId) ||
   checkDiagonalLine(y, x, gameBoard, playerId);
@@ -434,9 +506,9 @@ const pickWord = ((
   pickWord: (index: number, currentQuiz: ScrambledSentence) => void,
 ) => pickWord)(quizModel.pickWord);
 
-const unpickWord =( (
+const unpickWord = ((
   unpickWord: (index: number, userAnswer: UserAnswer) => void,
-) => unpickWord)(quizModel.unpickWord)
+) => unpickWord)(quizModel.unpickWord);
 
 export type Model = {
   getAxisWords: () => [XAxisWords, YAxisWords];
@@ -461,7 +533,7 @@ const model: Model = {
   setPlayerColor,
   getPlayers,
   pickWord,
-  unpickWord
+  unpickWord,
 };
 
 // startGame()

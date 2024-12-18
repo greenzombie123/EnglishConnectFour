@@ -29,6 +29,8 @@ import {
   makeTileInsertable,
   XWord,
   YWord,
+  GameResult,
+  Winner,
 } from "../src/model";
 
 describe("getCurrentPlayer", () => {
@@ -166,7 +168,7 @@ describe("isHorizontalLineWinner", () => {
 
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result: boolean = isHorizontalLineWinner(
+    const result: GameResult = isHorizontalLineWinner(
       targetY,
       targetX,
       gameBoard,
@@ -200,7 +202,7 @@ describe("isHorizontalLineWinner", () => {
     gameBoard[0][4].playerId = 1;
     gameBoard[0][5].playerId = 1;
 
-    const result: boolean = isHorizontalLineWinner(
+    const result: GameResult = isHorizontalLineWinner(
       targetY,
       targetX,
       gameBoard,
@@ -208,7 +210,7 @@ describe("isHorizontalLineWinner", () => {
       1,
     );
 
-    expect(result).toBe(true);
+    expect(result).toEqual({coordinates:[[0,2],[0,3],[0,4],[0,5]], winner:"winner", player:{playerId:1, color:"yellow"}} as Winner);
   });
 });
 
@@ -232,7 +234,7 @@ describe("isVerticalLineWinner", () => {
 
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result: boolean = isVerticalLineWinner(
+    const result: GameResult = isVerticalLineWinner(
       targetY,
       targetX,
       gameBoard,
@@ -266,7 +268,7 @@ describe("isVerticalLineWinner", () => {
     gameBoard[2][0].playerId = 1;
     gameBoard[3][0].playerId = 1;
 
-    const result: boolean = isVerticalLineWinner(
+    const result: GameResult = isVerticalLineWinner(
       targetY,
       targetX,
       gameBoard,
@@ -274,7 +276,7 @@ describe("isVerticalLineWinner", () => {
       1,
     );
 
-    expect(result).toBe(true);
+    expect(result).toEqual({coordinates:[[0,0],[1,0],[2,0],[3,0]], winner:"winner",  player:{playerId:1, color:"yellow"}} as Winner);
   });
 });
 
@@ -308,7 +310,7 @@ describe("isDiagonalLineWinner", () => {
 
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result: boolean = isDiagonalLineWinner(
+    const result: GameResult = isDiagonalLineWinner(
       targetY,
       targetX,
       gameBoard,
@@ -342,7 +344,7 @@ describe("isDiagonalLineWinner", () => {
     gameBoard[2][2].playerId = 1;
     gameBoard[3][3].playerId = 1;
 
-    const result: boolean = isDiagonalLineWinner(
+    const result: GameResult = isDiagonalLineWinner(
       targetY,
       targetX,
       gameBoard,
@@ -350,7 +352,7 @@ describe("isDiagonalLineWinner", () => {
       1,
     );
 
-    expect(result).toBe(true);
+    expect(result).toEqual({coordinates:[[0,0],[1,1],[2,2],[3,3]], winner:"winner",  player:{playerId:1, color:"yellow"}} as Winner);
   });
 });
 
@@ -374,7 +376,7 @@ describe("checkHorizontalLine", () => {
 
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard, 1);
+    const result: GameResult = checkHorizontalLine(targetY, targetX, gameBoard, 1);
 
     expect(result).toBe(false);
   });
@@ -402,9 +404,9 @@ describe("checkHorizontalLine", () => {
     gameBoard[0][2].playerId = 1;
     gameBoard[0][3].playerId = 1;
 
-    const result: boolean = checkHorizontalLine(targetY, targetX, gameBoard, 1);
+    const result: GameResult = checkHorizontalLine(targetY, targetX, gameBoard, 1);
 
-    expect(result).toBe(true);
+    expect(result).toEqual({coordinates:[[0,0],[0,1],[0,2],[0,3]], winner:"winner", player:{playerId:1, color:"yellow"}} as Winner);
   });
 });
 
@@ -428,7 +430,7 @@ describe("checkVerticalLine", () => {
 
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result: boolean = checkVerticalLine(targetY, targetX, gameBoard, 1);
+    const result: GameResult = checkVerticalLine(targetY, targetX, gameBoard, 1);
 
     expect(result).toBe(false);
   });
@@ -456,9 +458,9 @@ describe("checkVerticalLine", () => {
     gameBoard[2][0].playerId = 1;
     gameBoard[3][0].playerId = 1;
 
-    const result: boolean = checkVerticalLine(targetY, targetX, gameBoard, 1);
+    const result: GameResult = checkVerticalLine(targetY, targetX, gameBoard, 1);
 
-    expect(result).toBe(true);
+    expect(result).toEqual({coordinates:[[0,0],[1,0],[2,0],[3,0]], winner:"winner",  player:{playerId:1, color:"yellow"}} as Winner);
   });
 });
 
@@ -482,7 +484,7 @@ describe("checkDiagonalLine", () => {
 
     const gameBoard: GameBoard = createGameGrid(xAxisWords, yAxisWords);
 
-    const result: boolean = checkDiagonalLine(targetY, targetX, gameBoard, 1);
+    const result: GameResult = checkDiagonalLine(targetY, targetX, gameBoard, 1);
 
     expect(result).toBe(false);
   });
@@ -510,9 +512,9 @@ describe("checkDiagonalLine", () => {
     gameBoard[2][2].playerId = 1;
     gameBoard[3][3].playerId = 1;
 
-    const result: boolean = checkDiagonalLine(targetY, targetX, gameBoard, 1);
+    const result: GameResult = checkDiagonalLine(targetY, targetX, gameBoard, 1);
 
-    expect(result).toBe(true);
+    expect(result).toEqual({coordinates:[[0,0],[1,1],[2,2],[3,3]], winner:"winner",  player:{playerId:1, color:"yellow"}} as Winner);
   });
 
   test("Return true if there are four tokens in an opposite diagonal column", () => {
@@ -538,9 +540,9 @@ describe("checkDiagonalLine", () => {
     gameBoard[1][1].playerId = 1;
     gameBoard[0][0].playerId = 1;
 
-    const result: boolean = checkDiagonalLine(targetY, targetX, gameBoard, 1);
+    const result: GameResult = checkDiagonalLine(targetY, targetX, gameBoard, 1);
 
-    expect(result).toBe(true);
+    expect(result).toEqual({coordinates:[[0,0],[1,1],[2,2],[3,3]], winner:"winner",  player:{playerId:1, color:"yellow"}} as Winner);
   });
 });
 

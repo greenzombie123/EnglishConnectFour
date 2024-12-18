@@ -3,12 +3,14 @@ import colorPickerView from "./colorPickerView";
 import colorpickerView, { ColorPickerView } from "./colorPickerView";
 import gameBoardView, { GameBoardView } from "./gameBoardView";
 import quizView, { QuizView } from "./quizView";
+import winnerPopupView, { WinnerPopUpView } from "./winnerPopupView";
 import model, {
   Color,
   GameBoard,
   Model,
   Player,
   PlayerId,
+  Winner,
   XAxisNumber,
   YAxisNumber,
 } from "./model";
@@ -19,7 +21,8 @@ type ControllerProps = {
   gameBoardView: GameBoardView;
   model: Model;
   colorPickerView:ColorPickerView,
-  quizView:QuizView
+  quizView:QuizView,
+  winnerPopView:WinnerPopUpView
 };
 
 // export type  
@@ -115,6 +118,14 @@ const attachWorkClickHandlers = ({ssWords,uaWords}:{ssWords:HTMLDivElement[], ua
     })
 }
 
+const handleShowWinnerPopup = (winner:Winner)=>{
+    winnerPopupView.setPlayerColor(winner.player.color)
+    winnerPopupView.setWinnerText(winner.player.playerId)
+    winnerPopupView.revealWinnerPopup()
+}
+
+const handleCloseWinnerPopup = ()=>{}
+
 const controller = (props: ControllerProps) => {
   const { gameBoardView, model } = props;
 
@@ -168,6 +179,9 @@ const controller = (props: ControllerProps) => {
     // Handle resetting the quiz when reset button is pressed
     const resetButton = quizView.getResetButton()
     resetButton.addEventListener("click", handleResetButtonClick)
+
+    // Handle revealing winner popup when a 4 in a row was made
+    eventEmitter.subscribe("gameSet", handleShowWinnerPopup)
   };
 
   return { init };
@@ -177,7 +191,8 @@ const props: ControllerProps = {
   gameBoardView: gameBoardView,
   model: model,
   colorPickerView:colorPickerView,
-  quizView:quizView
+  quizView:quizView,
+  winnerPopView:winnerPopupView
 };
 
 export default controller(props);
