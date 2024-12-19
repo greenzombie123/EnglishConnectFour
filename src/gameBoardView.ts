@@ -1,4 +1,5 @@
 import {
+  FourCoodinates,
   XAxisNumber,
   XAxisWords,
   YAxisNumber,
@@ -8,7 +9,8 @@ import tileView, { TileView } from "./tileView";
 
 export type GameBoardView = {
   renderAxes: (xwords: XAxisWords, ywords: YAxisWords) => void;
-  getTileViews:()=>TileView[]
+  getTileViews: () => TileView[];
+  highlightFourInARow : (coordinates: FourCoodinates) => void
 };
 
 const gameBoardView = (): GameBoardView => {
@@ -40,41 +42,55 @@ const gameBoardView = (): GameBoardView => {
   const getTileDivs = () =>
     Array.from(document.querySelectorAll(".tile")) as HTMLDivElement[];
 
-  const createTileViews = (
-    tileDivs: HTMLDivElement[],
-  ) => {
+  const createTileViews = (tileDivs: HTMLDivElement[]) => {
     const tileViews: TileView[] = [];
-    let index = 0
+    let index = 0;
 
     for (let y: YAxisNumber = 5; y >= 0; y--) {
       for (let x: XAxisNumber = 0; x <= 9; x++) {
         x = x as XAxisNumber;
         y = y as YAxisNumber;
-        const tv = tileDivs[index]
+        const tv = tileDivs[index];
         if (tv) {
-          tileViews.push( tileView(tv, [y, x]));
+          tileViews.push(tileView(tv, [y, x]));
         }
-        index++
+        index++;
       }
     }
 
-    return tileViews
+    return tileViews;
   };
 
-  const setTileViews = (tileViewList:TileView[]) => {
-    tileViews = tileViewList
+  const setTileViews = (tileViewList: TileView[]) => {
+    tileViews = tileViewList;
   };
 
-  const getTileViews = ()=> tileViews
+  const getTileViews = () => tileViews;
 
   const renderAxes = (xwords: XAxisWords, ywords: YAxisWords) => {
     renderXaxis(xwords);
     renderYaxis(ywords);
   };
 
-  setTileViews(createTileViews(getTileDivs()))
+  const highlightFourInARow = (coordinates: FourCoodinates) => {
+    const tileViews = getTileViews();
 
-  return { renderAxes, getTileViews };
+    tileViews.forEach((tileView) => {
+      const tvCoordinates = tileView.getCoordinates();
+
+      coordinates.forEach((coordinate) => {
+        if (
+          coordinate[0] === tvCoordinates[0] &&
+          coordinate[1] === tvCoordinates[1]
+        )
+          tileView.flashToken();
+      });
+    });
+  };
+
+  setTileViews(createTileViews(getTileDivs()));
+
+  return { renderAxes, getTileViews, highlightFourInARow };
 };
 
 export default gameBoardView();

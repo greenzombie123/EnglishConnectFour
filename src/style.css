@@ -36,6 +36,10 @@ body{
                     &.invalid{
                         animation: .2s ease-in invalid;
                     }
+
+                    &.winner > .token{
+                        animation: .3s ease-in-out infinite flash;
+                    }
                     
 
                     .token{
@@ -47,9 +51,7 @@ body{
                         border-radius: 50%;
                         animation: .5s ease-in-out reverse falldown;
 
-                        &.red{
-                            background-color: red;
-                        }
+                        
 
                         &.yellow{
                             background-color: yellow;
@@ -77,6 +79,10 @@ body{
 
                         &.pink{
                             background-color: pink;
+                        }
+
+                        &.red{
+                            background-color: red;
                         }
 
                         
@@ -275,6 +281,7 @@ dialog.quiz{
 }
 
 dialog.winnerPopup{
+    background-color: #ffffffe0;
     .winnerPopup{
         display: flex;
         flex-flow: column;
@@ -318,6 +325,48 @@ dialog.winnerPopup{
     to{
         background-color: white;
     }
+}
+
+/* @keyframes flash {
+    0%{background-color: yellow;}
+    100%{background-color: gold;}
+} */
+
+@keyframes flash {
+
+    0%{
+        background: linear-gradient(gold, 25%, yellow);
+    }
+
+    20%{
+        background: linear-gradient(gold, 50%, yellow);
+    }
+
+    30%{
+        background: linear-gradient(gold, 75%, yellow);
+    }
+
+    40%{
+        background: linear-gradient(gold, 100%, yellow);
+    }
+
+
+    60%{
+        background: linear-gradient(yellow, 25%, gold);
+    }
+
+    70%{
+        background: linear-gradient(yellow, 50%, gold);
+    }
+
+    80%{
+        background: linear-gradient(yellow, 75%, gold);
+    }
+
+    100%{
+        background: linear-gradient(yellow, 90%, gold);
+    }
+
 }
 
 

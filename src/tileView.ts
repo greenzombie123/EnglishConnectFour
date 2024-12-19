@@ -4,7 +4,8 @@ export type TileView = {
   renderToken: (color: Color) => void;
   showInvalidMove: () => void;
   getCoordinates: () => [YAxisNumber, XAxisNumber];
-  getTileDiv:()=>HTMLDivElement
+  getTileDiv:()=>HTMLDivElement,
+  flashToken:()=>void
 };
 
 const tileView = (
@@ -29,7 +30,11 @@ const tileView = (
 
   const getTileDiv = ()=> tileDiv
 
-  return { renderToken, showInvalidMove, getCoordinates, getTileDiv };
+  const flashToken =()=>{
+    tileDiv.classList.add("winner");
+  }
+
+  return { renderToken, showInvalidMove, getCoordinates, getTileDiv, flashToken };
 };
 
 export default tileView;

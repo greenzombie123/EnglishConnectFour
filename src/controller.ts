@@ -6,6 +6,7 @@ import quizView, { QuizView } from "./quizView";
 import winnerPopupView, { WinnerPopUpView } from "./winnerPopupView";
 import model, {
   Color,
+  FourCoodinates,
   GameBoard,
   Model,
   Player,
@@ -119,12 +120,23 @@ const attachWorkClickHandlers = ({ssWords,uaWords}:{ssWords:HTMLDivElement[], ua
 }
 
 const handleShowWinnerPopup = (winner:Winner)=>{
-    winnerPopupView.setPlayerColor(winner.player.color)
-    winnerPopupView.setWinnerText(winner.player.playerId)
-    winnerPopupView.revealWinnerPopup()
+
+    setTimeout(()=>{
+        winnerPopupView.setPlayerColor(winner.player.color)
+        winnerPopupView.setWinnerText(winner.player.playerId)
+        winnerPopupView.revealWinnerPopup()
+    }, 1000)  
 }
 
-const handleCloseWinnerPopup = ()=>{}
+const handleCloseWinnerPopup = ()=>{
+    winnerPopupView.hideWinnerPopup()
+    // 
+    model.startGame()
+}
+
+const handleFlashTokens = (coordinates:FourCoodinates)=>{
+    gameBoardView.highlightFourInARow(coordinates)
+}
 
 const controller = (props: ControllerProps) => {
   const { gameBoardView, model } = props;
@@ -182,6 +194,9 @@ const controller = (props: ControllerProps) => {
 
     // Handle revealing winner popup when a 4 in a row was made
     eventEmitter.subscribe("gameSet", handleShowWinnerPopup)
+
+    // Handle flashing winning tokens 
+    eventEmitter.subscribe("flashTokens", handleFlashTokens)
   };
 
   return { init };

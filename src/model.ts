@@ -333,12 +333,10 @@ const isOppositeDiagonalLineWinner = (
       return false;
 
 
-    // coordinates.push([startingY, startingX]);
-    console.log(coordinates, currentPlayerId)
     const tile: Tile = findTile(startingY, startingX, gameBoard);
     if (tile.playerId !== currentPlayerId) return false;
 
-    // coordinates.push([startingY, startingX]);
+    coordinates.push([startingY, startingX]);
 
     startingX++;
     startingY--;
@@ -438,6 +436,7 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   if (gameResult) {
     console.log("WINNER", gameResult);
     eventEmitter.emitEvent("gameSet", gameResult)
+    eventEmitter.emitEvent("flashTokens", gameResult.coordinates)
   }
   if (isAboveTileInsertable(y, x, newGameBoard))
     makeTileInsertable(x, y, newGameBoard);
