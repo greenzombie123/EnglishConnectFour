@@ -17,6 +17,7 @@ import model, {
 } from "./model";
 import { TileView } from "./tileView";
 import quizModel, { CorrectSentence, ScrambledSentence, UserAnswer } from "./quizModel";
+import playerFirstView from "./playerFirstView";
 
 type ControllerProps = {
   gameBoardView: GameBoardView;
@@ -59,6 +60,8 @@ const handleColorDotClick =(colorDotDiv:HTMLDivElement, playerId:PlayerId)=> ()=
 const handleStartButtonClick = ()=>{
     colorpickerView.hideColorPicker()
     model.startGame();
+    const firstPlayer= model.getCurrentPlayer()
+    playerFirstView.showDialog(firstPlayer)
 }
 
 const handleChosePlayerColor = ({playerId, color}:{playerId:PlayerId, color:Color})=>{
@@ -132,10 +135,20 @@ const handleCloseWinnerPopup = ()=>{
     winnerPopupView.hideWinnerPopup()
     gameBoardView.resetTiles()
     model.startGame()
+    const firstPlayer = model.getCurrentPlayer()
+    playerFirstView.showDialog(firstPlayer)
 }
 
 const handleFlashTokens = (coordinates:FourCoodinates)=>{
     gameBoardView.highlightFourInARow(coordinates)
+}
+
+// const handleShowFirstPlayerDialog = (player:Player)=>{
+//     playerFirstView.showDialog(player)
+// }
+
+const handleCloseFirstPlayerDialog = ()=>{
+    playerFirstView.closeDialog()
 }
 
 const controller = (props: ControllerProps) => {
@@ -200,6 +213,13 @@ const controller = (props: ControllerProps) => {
 
     // Handle flashing winning tokens 
     eventEmitter.subscribe("flashTokens", handleFlashTokens)
+
+    // // Handle showing who goes first
+    // eventEmitter.subscribe("showFirstPlayer", handleShowFirstPlayerDialog)
+
+    // Handle closing playerFirst
+    const playerFirstButton = playerFirstView.getButton()
+    playerFirstButton.addEventListener("click", handleCloseFirstPlayerDialog)
   };
 
   return { init };

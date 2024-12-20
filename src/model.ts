@@ -522,6 +522,7 @@ export type Model = {
   getPlayers: () => { 1: Player; 2: Player };
   pickWord: (index: number, currentQuiz: ScrambledSentence) => void;
   unpickWord: (index: number, userAnswer: UserAnswer) => void;
+  getCurrentPlayer:()=>Player
 };
 
 const model: Model = {
@@ -533,6 +534,7 @@ const model: Model = {
   getPlayers,
   pickWord,
   unpickWord,
+  getCurrentPlayer
 };
 
 // startGame()
