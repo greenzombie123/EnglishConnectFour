@@ -144,8 +144,6 @@ const gameStatus = new Set<"quiz" | "game" | "end">();
 
 let currentEmptyTile: [YAxisNumber, XAxisNumber];
 
-// console.log(quizModel.createScrambledSentence({words:["I", "eat", "rice", "everyday"],type:"correct", translation:"私は毎日ライスを食べる"}))
-
 const setCurrentPlayer = (playerId: PlayerId) =>
   (currentPlayer = players[playerId]);
 
@@ -414,16 +412,13 @@ const startGame = () => {
 };
 
 const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
-  if (gameStatus.has("quiz")) return console.log("NOPE!");
+  if (gameStatus.has("quiz")) return 
   const gameBoard = getGameBoard();
   const tile: Tile = findTile(y, x, gameBoard);
   if (!canInsertToken(tile))
     return eventEmitter.emitEvent("invalidMove", [y, x]);
+
   //TODO Check here if the token will be a winner
-  // setCurrentEmptyTile(y, x);
-  // startQuiz(tile);
-  // return
-  //TODO Delete this when able
   const player = getCurrentPlayer();
   const newGameBoard = insertToken(x, y, gameBoard, player);
   const gameResult: GameResult = checkWinner(
@@ -432,18 +427,39 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
     newGameBoard,
     player.playerId,
   );
-  // console.log(gameResult)
   if (gameResult) {
-    console.log("WINNER", gameResult);
+    eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
     eventEmitter.emitEvent("gameSet", gameResult)
     eventEmitter.emitEvent("flashTokens", gameResult.coordinates)
+    return
   }
-  if (isAboveTileInsertable(y, x, newGameBoard))
-    makeTileInsertable(x, y, newGameBoard);
+  //
+  setCurrentEmptyTile(y, x);
+  startQuiz(tile);
+  return
+  //TODO Delete this when able
+  // const player = getCurrentPlayer();
+  // const newGameBoard = insertToken(x, y, gameBoard, player);
+  //  const gameResult: GameResult = checkWinner(
+  //   x,
+  //   y,
+  //   newGameBoard,
+  //   player.playerId,
+  // );
+  // if (gameResult) {
+  //   eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
+  //   eventEmitter.emitEvent("gameSet", gameResult)
+  //   eventEmitter.emitEvent("flashTokens", gameResult.coordinates)
+  //   return
+  // }
+  // eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
 
-  eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
-  changePlayers();
-  gameStatus.delete("quiz");
+  // if (isAboveTileInsertable(y, x, newGameBoard))
+  //   makeTileInsertable(x, y, newGameBoard);
+
+  
+  // changePlayers();
+  // gameStatus.delete("quiz");
 };
 
 const setCurrentEmptyTile = (y: YAxisNumber, x: XAxisNumber) => {
@@ -453,23 +469,13 @@ const getCurrentEmptyTile = () => currentEmptyTile;
 
 const putTokenInTile = () => {
   const [y, x] = getCurrentEmptyTile();
-  const gameBoard = getGameBoard();
-  const player = getCurrentPlayer();
-  const newGameBoard = insertToken(x, y, gameBoard, player);
-  const gameResult: GameResult = checkWinner(
-    x,
-    y,
-    newGameBoard,
-    player.playerId,
-  );
-  if (gameResult) {
-    console.log("WINNER", gameResult);
-    eventEmitter.emitEvent("gameSet", gameResult)
-  }
+  const currentPlayer = getCurrentPlayer()
+  const newGameBoard = getGameBoard();
+  eventEmitter.emitEvent("insertToken", { color: currentPlayer.color, x, y });
+ 
   if (isAboveTileInsertable(y, x, newGameBoard))
     makeTileInsertable(x, y, newGameBoard);
 
-  eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
   changePlayers();
   gameStatus.delete("quiz");
 };

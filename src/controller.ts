@@ -140,7 +140,9 @@ const handleCloseWinnerPopup = ()=>{
 }
 
 const handleFlashTokens = (coordinates:FourCoodinates)=>{
-    gameBoardView.highlightFourInARow(coordinates)
+    setTimeout(()=>{
+        gameBoardView.highlightFourInARow(coordinates)
+    }, 500)
 }
 
 // const handleShowFirstPlayerDialog = (player:Player)=>{
