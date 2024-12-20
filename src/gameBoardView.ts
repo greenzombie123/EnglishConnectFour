@@ -10,7 +10,8 @@ import tileView, { TileView } from "./tileView";
 export type GameBoardView = {
   renderAxes: (xwords: XAxisWords, ywords: YAxisWords) => void;
   getTileViews: () => TileView[];
-  highlightFourInARow : (coordinates: FourCoodinates) => void
+  highlightFourInARow : (coordinates: FourCoodinates) => void;
+  resetTiles:()=>void
 };
 
 const gameBoardView = (): GameBoardView => {
@@ -88,9 +89,14 @@ const gameBoardView = (): GameBoardView => {
     });
   };
 
+  const resetTiles = ()=>{
+    const tileViews = getTileViews()
+    tileViews.forEach(tileView=>tileView.deleteToken())
+  }
+
   setTileViews(createTileViews(getTileDivs()));
 
-  return { renderAxes, getTileViews, highlightFourInARow };
+  return { renderAxes, getTileViews, highlightFourInARow, resetTiles };
 };
 
 export default gameBoardView();

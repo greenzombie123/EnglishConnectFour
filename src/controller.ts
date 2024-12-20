@@ -130,7 +130,7 @@ const handleShowWinnerPopup = (winner:Winner)=>{
 
 const handleCloseWinnerPopup = ()=>{
     winnerPopupView.hideWinnerPopup()
-    // 
+    gameBoardView.resetTiles()
     model.startGame()
 }
 
@@ -193,7 +193,10 @@ const controller = (props: ControllerProps) => {
     resetButton.addEventListener("click", handleResetButtonClick)
 
     // Handle revealing winner popup when a 4 in a row was made
+    // Handle closing the winner popup and restarting the game
     eventEmitter.subscribe("gameSet", handleShowWinnerPopup)
+    const winnerPopUpButton = winnerPopupView.getReplayButton()
+    winnerPopUpButton.addEventListener("click", handleCloseWinnerPopup)
 
     // Handle flashing winning tokens 
     eventEmitter.subscribe("flashTokens", handleFlashTokens)
