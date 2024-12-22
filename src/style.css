@@ -21,9 +21,12 @@ body{
         .gameBoard{
             cursor: pointer;
 
+           
+
             .row{
                 position: relative;
                 display: flex;
+
                 .tile {
                     display: flex;
                     justify-content: center;
@@ -32,6 +35,7 @@ body{
                     width: 120px;
                     height: 100px;
                     cursor: pointer;
+                              
 
                     &.invalid{
                         animation: .2s ease-in invalid;
@@ -41,7 +45,6 @@ body{
                         animation: .3s ease-in-out infinite flash;
                     }
                     
-
                     .token{
                         content: "";
                         display: block;
@@ -84,8 +87,6 @@ body{
                         &.red{
                             background-color: red;
                         }
-
-                        
                     }
 
                     
@@ -111,15 +112,19 @@ body{
                 }
                 .cornerTile{}
             }
+            
+        }
+
+        footer{
+            padding: 3px;
+            background-color: aqua;
+            text-align: center;
         }
     }
-
-    footer{
-        padding: 3px;
-        background-color: aqua;
-        text-align: center;
-    }
 }
+
+    
+
 
 dialog.colorPicker{
     background-color: transparent;
@@ -359,11 +364,6 @@ dialog.playerFirst{
     }
 }
 
-/* @keyframes flash {
-    0%{background-color: yellow;}
-    100%{background-color: gold;}
-} */
-
 @keyframes flash {
 
     0%{
@@ -400,6 +400,5 @@ dialog.playerFirst{
     }
 
 }
-
 
 

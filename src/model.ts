@@ -433,10 +433,9 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
     eventEmitter.emitEvent("flashTokens", gameResult.coordinates)
     return
   }
-  //
+  //! Take out when you dont want to quiz the players
   setCurrentEmptyTile(y, x);
   startQuiz(tile);
-  return
   //TODO Delete this when able
   // const player = getCurrentPlayer();
   // const newGameBoard = insertToken(x, y, gameBoard, player);
@@ -459,7 +458,7 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
 
   
   // changePlayers();
-  // gameStatus.delete("quiz");
+  // gameStatus.delete("quiz"); 
 };
 
 const setCurrentEmptyTile = (y: YAxisNumber, x: XAxisNumber) => {

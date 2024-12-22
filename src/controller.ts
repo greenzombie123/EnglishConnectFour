@@ -16,7 +16,7 @@ import model, {
   YAxisNumber,
 } from "./model";
 import { TileView } from "./tileView";
-import quizModel, { CorrectSentence, ScrambledSentence, UserAnswer } from "./quizModel";
+import quizModel, { ScrambledSentence, UserAnswer } from "./quizModel";
 import playerFirstView from "./playerFirstView";
 
 type ControllerProps = {
@@ -48,6 +48,7 @@ const handleInsertToken = ({
   const pickedTile = tileViews.find((tileView) => {
     const [tvY, tvX] = tileView.getCoordinates();
     if (tvX === x && tvY === y) return tileView;
+    return false
   });
   if (pickedTile) pickedTile.renderToken(color);
 };
@@ -77,6 +78,7 @@ const handleInvalidMove = ([y, x]:[y:YAxisNumber, x:XAxisNumber])=>{
   const pickedTile = tileViews.find((tileView) => {
     const [tvY, tvX] = tileView.getCoordinates();
     if (tvX === x && tvY === y) return tileView;
+    return false
   });
   if (pickedTile) pickedTile.showInvalidMove();
 }

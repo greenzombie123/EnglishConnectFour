@@ -19,9 +19,11 @@ const winnerPopupView = ():WinnerPopUpView => {
   const revealWinnerPopup = () => {
     dialog.showModal();
   };
+
   const hideWinnerPopup = () => {
     dialog.close();
   };
+  
   const getReplayButton = () => replayButton;
 
   const setPlayerColor = (color:Color)=>{
