@@ -434,8 +434,8 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
     return
   }
   //! Take out when you dont want to quiz the players
-  setCurrentEmptyTile(y, x);
-  startQuiz(tile);
+  // setCurrentEmptyTile(y, x);
+  // startQuiz(tile);
   //TODO Delete this when able
   // const player = getCurrentPlayer();
   // const newGameBoard = insertToken(x, y, gameBoard, player);
@@ -451,14 +451,14 @@ const pickTile = (y: YAxisNumber, x: XAxisNumber) => {
   //   eventEmitter.emitEvent("flashTokens", gameResult.coordinates)
   //   return
   // }
-  // eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
+  eventEmitter.emitEvent("insertToken", { color: player.color, x, y });
 
-  // if (isAboveTileInsertable(y, x, newGameBoard))
-  //   makeTileInsertable(x, y, newGameBoard);
+  if (isAboveTileInsertable(y, x, newGameBoard))
+    makeTileInsertable(x, y, newGameBoard);
 
   
-  // changePlayers();
-  // gameStatus.delete("quiz"); 
+  changePlayers();
+  gameStatus.delete("quiz"); 
 };
 
 const setCurrentEmptyTile = (y: YAxisNumber, x: XAxisNumber) => {
@@ -542,25 +542,7 @@ const model: Model = {
   getCurrentPlayer
 };
 
-// startGame()
-// pickTile(0,0)
-// // console.log(gameBoard)
-// console.log(quizModel.getCorrectAnswer().words)
-// console.log(quizModel.getCurrentQuiz().words)
-// console.log(quizModel.getUserAnswer().words)
-// console.log(pickWord(0, quizModel.getCurrentQuiz()))
-// console.log(quizModel.getCurrentQuiz().words)
-// console.log(quizModel.getUserAnswer().words)
-// console.log(pickWord(0, quizModel.getCurrentQuiz()))
-// console.log(quizModel.getCurrentQuiz().words)
-// console.log(quizModel.getUserAnswer().words)
-// console.log(pickWord(0, quizModel.getCurrentQuiz()))
-// console.log(quizModel.getCurrentQuiz().words)
-// console.log(quizModel.getUserAnswer().words)
-// console.log(pickWord(0, quizModel.getCurrentQuiz()))
-// console.log(quizModel.getCurrentQuiz().words)
-// console.log(quizModel.getUserAnswer().words)
-// console.log(gameBoard)
+
 
 export default model;
 
